@@ -472,7 +472,7 @@ UnminedCustomMarkers = {
         },
         {
             x: -215,
-            z: 1413,
+            z: 1450,
             image: "pinImages/house.pin.svg",
             imageAnchor: [0.5, 0.5],
             imageScale: 0.05,
@@ -553,7 +553,7 @@ UnminedCustomMarkers = {
         },
         {
             x: 350,
-            z: 1410,
+            z: 1445,
             image: "pinImages/house.pin.svg",
             imageAnchor: [0.5, 0.5],
             imageScale: 0.05,
@@ -615,7 +615,7 @@ UnminedCustomMarkers = {
         },
         {
             x: 15,
-            z: 1572,
+            z: 1584,
             image: "pinImages/port.pin.svg",
             imageAnchor: [0.5, 0.5],
             imageScale: 0.05,
@@ -631,7 +631,7 @@ UnminedCustomMarkers = {
         },
         {
             x: 197,
-            z: 1500,
+            z: 1533,
             image: "pinImages/line1.pin.svg",
             imageAnchor: [0.5, 0.5],
             imageScale: 0.05,
@@ -857,7 +857,7 @@ UnminedCustomMarkers = {
             offsetX: 0,
             offsetY: 20,
             font: "bold 15px Calibri,sans serif",
-            minZoom: 7,
+            minZoom: 6,
             maxZoom: 8,
         },
         {
@@ -1260,7 +1260,7 @@ UnminedCustomMarkers = {
         },
         {
             x: -391,
-            z: 1500,
+            z: 1365,
             image: "pinImages/line4.pin.svg",
             imageAnchor: [0.5, 0.5],
             imageScale: 0.05,
@@ -1949,7 +1949,7 @@ UnminedCustomMarkers = {
         },
         {
             x: -1600,
-            z: 1500,
+            z: 1365,
             image: "pinImages/line4.pin.svg",
             imageAnchor: [0.5, 0.5],
             imageScale: 0.05,
@@ -2084,7 +2084,7 @@ UnminedCustomMarkers = {
             offsetX: 0,
             offsetY: 20,
             font: "bold 15px Calibri,sans serif",
-            minZoom: 6,
+            minZoom: 7,
             maxZoom: 8,
         },
         {
@@ -2355,7 +2355,7 @@ UnminedCustomMarkers = {
         },
         {
             x: 1322,
-            z: 1500,
+            z: 1533,
             image: "pinImages/line4.pin.svg",
             imageAnchor: [0.5, 0.5],
             imageScale: 0.05,
@@ -2436,12 +2436,12 @@ UnminedCustomMarkers = {
             maxZoom: 8,
         },
         {
-            x: -216,
+            x: -235,
             z: 1280,
             image: "pinImages/house.pin.svg",
             imageAnchor: [0.5, 0.5],
             imageScale: 0.05,
-            text: "크리뉴 포레(예정)",
+            text: "크리뉴 포레",
             textColor: houseColor,
             textStrokeColor: "black",
             textStrokeWidth: 3,
@@ -2454,8 +2454,8 @@ UnminedCustomMarkers = {
 
         //ㅌ
         {
-            x: 74,
-            z: 1413,
+            x: 44,
+            z: 1447,
             image: "pinImages/house.pin.svg",
             imageAnchor: [0.5, 0.5],
             imageScale: 0.05,
