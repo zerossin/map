@@ -197,6 +197,7 @@ div.ol-mouse-position {
 /* 확장된 창 상태 */
 #detail-window.expanded {
     height: 100%; /* 전체 높이로 확장 */
+    overflow: scroll;
 }
 
 /* 상세 내용 */

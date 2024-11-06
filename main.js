@@ -335,7 +335,7 @@ function showDetailWindow(marker) {
     titleElement.textContent = marker.text;
     photoElement.src = marker.photo || 'images/default.png';
     photoElement.alt = marker.text;
-    addressElement.textContent = marker.address || '주소 정보 없음';
+    addressElement.textContent = marker.address ? `${marker.address} (${marker.x}, ${marker.z})` : `주소 정보 없음 (${marker.x}, ${marker.z})`;
 
     // 추가 내용 초기화
     infoElement.textContent = '';
