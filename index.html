@@ -36,7 +36,7 @@
 
     <div id="map"></div>
 
-    <!-- 세부 정보 창 -->
+    <!-- 세부 정보 -->
     <div id="detail-window">
         <button id="detail-close-button">×</button>
         <script>
@@ -68,14 +68,52 @@
         <form id="review-form">
             <!-- 이름 입력란 제거 -->
             <!-- 별점 입력을 위한 별점 선택 요소 추가 -->
-            <div class="star-rating">
-                <span data-value="5">★</span>
-                <span data-value="4">★</span>
-                <span data-value="3">★</span>
-                <span data-value="2">★</span>
-                <span data-value="1">★</span>
+            <div class="star-rating-container">
+                <div class="star-rating">
+                    <span data-value="5">★</span>
+                    <span data-value="4">★</span>
+                    <span data-value="3">★</span>
+                    <span data-value="2">★</span>
+                    <span data-value="1">★</span>
+                </div>
+                <span id="selected-rating">0점</span>
             </div>
-            <textarea name="comment" placeholder="댓글" required></textarea><br>
+            <script>
+                // 별점 선택 기능 구현
+                var selectedRating = 0;
+                var stars = document.querySelectorAll('.star-rating span');
+
+                stars.forEach(function (star) {
+                    star.addEventListener('click', function () {
+                        selectedRating = parseInt(star.getAttribute('data-value'));
+
+                        // 모든 별에서 'selected' 클래스 제거
+                        stars.forEach(function (s) {
+                            s.classList.remove('selected');
+                        });
+
+                        // 선택된 별과 그 이전 별들에게 'selected' 클래스 추가
+                        for (var i = 0; i < stars.length; i++) {
+                            if (i < selectedRating) {
+                                stars[i].classList.add('selected');
+                            }
+                        }
+
+                        // 선택한 별점 값을 표시
+                        document.getElementById('selected-rating').textContent = selectedRating + '점';
+                    });
+                });
+
+
+                function getPreviousSiblings(elem) {
+                    var siblings = [];
+                    while (elem = elem.previousElementSibling) {
+                        siblings.push(elem);
+                    }
+                    return siblings;
+                }
+            </script>
+            <textarea name="comment" placeholder="리뷰 작성란" required></textarea><br>
             <button type="submit">등록</button>
         </form>
     </div>

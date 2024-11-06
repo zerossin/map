@@ -108,33 +108,6 @@ function getStars(rating) {
     return starsHtml;
 }
 
-// 별점 선택 기능 구현
-var selectedRating = 0;
-var stars = document.querySelectorAll('.star-rating span');
-
-stars.forEach(function (star) {
-    star.addEventListener('click', function () {
-        selectedRating = parseInt(star.getAttribute('data-value'));
-        // 선택된 별점에 클래스 적용
-        stars.forEach(function (s) {
-            s.classList.remove('selected');
-        });
-        star.classList.add('selected');
-        var previousSiblings = getPreviousSiblings(star);
-        previousSiblings.forEach(function (s) {
-            s.classList.add('selected');
-        });
-    });
-});
-
-function getPreviousSiblings(elem) {
-    var siblings = [];
-    while (elem = elem.previousElementSibling) {
-        siblings.push(elem);
-    }
-    return siblings;
-}
-
 // 리뷰 폼 제출 이벤트 핸들러 정의
 function handleReviewSubmit(e) {
     e.preventDefault();
