@@ -177,7 +177,7 @@ class Unmined {
             });
 
             // 마커 클릭 이벤트 처리 코드 추가
-            var clickTolerance = 5;
+            var clickTolerance = 10;
             var startPixel = null;
             var hitToleranceValue = 20; // 클릭 판정 범위 (픽셀 단위)
 
@@ -255,6 +255,7 @@ class Unmined {
                         font: item.font,
                         offsetX: item.offsetX,
                         offsetY: item.offsetY,
+                        info: item.info,
                         fill: item.textColor ? new ol.style.Fill({
                             color: item.textColor
                         }) : null,
