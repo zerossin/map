@@ -207,8 +207,8 @@ class Unmined {
                 if (feature && feature.get('markerData')) {
                     // 마커를 클릭한 경우
                     var marker = feature.get('markerData');
-                    focusOnMarker(marker);
                     showDetailWindow(marker);
+                    focusOnMarker(marker);
                 }
             });
 

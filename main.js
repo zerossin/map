@@ -70,20 +70,45 @@ function updateSearchResults(query) {
 }
 
 resultItem.addEventListener('click', function () {
-    focusOnMarker(marker);
     showDetailWindow(marker);
+    focusOnMarker(marker);
     resultsContainer.style.display = 'none'; // 결과 목록 숨기기
     document.getElementById('search-window').value = ''; // 검색창 초기화
 });
 
 function focusOnMarker(marker) {
     var coordinate = [marker.x, -marker.z];
-    var view = map.getView(); // 이제 전역 변수 map을 사용합니다.
+    var view = map.getView();
+    var resolution = view.getResolution();
+
+    var detailWindow = document.getElementById('detail-window');
+    var detailWindowWidth = detailWindow.offsetWidth || 0;
+    var detailWindowHeight = detailWindow.offsetHeight || 0;
+
+    var mapSize = map.getSize(); // [width, height]
+
+    var offsetX = 0;
+    var offsetY = 0;
+
+    if (window.innerWidth <= 768) {
+        // 모바일 환경: 세부 정보 창이 아래쪽에 위치하므로 Y축으로 오프셋 적용
+        offsetY = (detailWindowHeight / 2) * resolution;
+    } else {
+        // 데스크톱 환경: 세부 정보 창이 오른쪽에 위치하므로 X축으로 오프셋 적용
+        offsetX = (detailWindowWidth / 2) * resolution;
+    }
+
+    var adjustedCoordinate = [
+        coordinate[0] + offsetX, // X축 조정
+        coordinate[1] - offsetY  // Y축 조정
+    ];
+
     view.animate({
-        center: coordinate,
-        duration: 300 // 0.3초 동안 애니메이션
+        center: adjustedCoordinate,
+        duration: 300
     });
 }
+
 window.focusOnMarker = focusOnMarker;
 
 // 현재 마커를 저장할 변수 선언
