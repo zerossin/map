@@ -719,7 +719,7 @@ UnminedCustomMarkers = {
             maxZoom: 8,
         },
         {
-            x: -973,
+            x: -1400,
             z: 390,
             image: "pinImages/heritage.pin.svg",
             imageAnchor: [0.5, 0.5],
@@ -2310,7 +2310,7 @@ UnminedCustomMarkers = {
             offsetX: 0,
             offsetY: 20,
             font: "bold 15px Calibri,sans serif",
-            minZoom: 6,
+            minZoom: 8,
             maxZoom: 8,
         },
         {
