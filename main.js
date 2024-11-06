@@ -297,33 +297,63 @@ closeButton.addEventListener('click', function () {
 window.showDetailWindow = showDetailWindow;
 
 
-// 기존 코드 위에 추가 또는 수정
+// 현재 마커를 저장할 변수 선언
+var currentMarker = null;
 
-// 작은 세부 창 요소 가져오기
-var miniDetailWindow = document.getElementById('mini-detail-window');
-var miniTitleElement = document.getElementById('mini-detail-title');
-var miniRatingStarsElement = document.getElementById('mini-detail-rating-stars');
-var miniReviewCountElement = document.getElementById('mini-detail-review-count');
-var miniPhotoElement = document.getElementById('mini-detail-photo');
-var miniAddressElement = document.getElementById('mini-detail-address');
+// 세부 창 요소 가져오기
+var detailWindow = document.getElementById('detail-window');
+var detailCloseButton = document.getElementById('detail-close-button');
 
-// 작은 세부 창 클릭 시 전체 세부 창으로 확장
-miniDetailWindow.addEventListener('click', function () {
-    miniDetailWindow.style.display = 'none';
-    showDetailWindow(currentMarker);
+// 세부 창 내부 요소들
+var titleElement = document.getElementById('detail-title');
+var ratingElementStars = document.getElementById('detail-rating-stars');
+var reviewCountElement = document.getElementById('detail-review-count');
+var photoElement = document.getElementById('detail-photo');
+var addressElement = document.getElementById('detail-address');
+var infoElement = document.getElementById('detail-info-text');
+var reviewsList = document.getElementById('detail-reviews');
+
+// 세부 창 클릭 시 확장
+detailWindow.addEventListener('click', function (e) {
+    // 닫기 버튼이나 폼 내부 클릭 시 이벤트 전파 방지
+    if (e.target === detailCloseButton || e.target.closest('#review-form')) {
+        return;
+    }
+
+    // 작은 창 상태일 때만 확장
+    if (detailWindow.classList.contains('small')) {
+        detailWindow.classList.remove('small');
+        detailWindow.classList.add('expanded');
+    }
 });
 
-// showMiniDetailWindow 함수 추가
-function showMiniDetailWindow(marker) {
+// 닫기 버튼 이벤트 처리
+detailCloseButton.addEventListener('click', function (e) {
+    e.stopPropagation(); // 이벤트 전파 방지
+    detailWindow.style.display = 'none';
+    detailWindow.classList.remove('expanded');
+    detailWindow.classList.add('small');
+});
+
+// 세부 창 표시 함수
+function showDetailWindow(marker) {
     currentMarker = marker;
 
-    // 작은 세부 창에 데이터 채우기
-    miniTitleElement.textContent = marker.text;
-    miniPhotoElement.src = marker.photo || 'images/default.png';
-    miniPhotoElement.alt = marker.text;
-    miniAddressElement.textContent = marker.address || '주소 정보 없음';
+    // 창을 작은 상태로 초기화
+    detailWindow.classList.remove('expanded');
+    detailWindow.classList.add('small');
 
-    // 서버에서 리뷰 및 별점 평균 가져오기
+    // 기본 정보 채우기
+    titleElement.textContent = marker.text;
+    photoElement.src = marker.photo || 'images/default.png';
+    photoElement.alt = marker.text;
+    addressElement.textContent = marker.address || '주소 정보 없음';
+
+    // 추가 내용 초기화
+    infoElement.textContent = '';
+    reviewsList.innerHTML = '';
+
+    // 별점 및 리뷰 수 가져오기
     fetch(`https://api.mintsclover.com/reviews?placeId=${encodeURIComponent(marker.text)}`)
         .then(function (response) {
             return response.json();
@@ -333,25 +363,56 @@ function showMiniDetailWindow(marker) {
             var averageRating = data.averageRating;
             var reviewCount = reviews.length;
 
-            miniRatingStarsElement.innerHTML = getStars(averageRating);
-            miniReviewCountElement.textContent = `${reviewCount}개`;
+            ratingElementStars.innerHTML = getStars(averageRating);
+            reviewCountElement.textContent = `${reviewCount}개`;
         })
         .catch(function (error) {
             console.error('Error:', error);
-            miniRatingStarsElement.innerHTML = getStars(0);
-            miniReviewCountElement.textContent = '0개';
+            ratingElementStars.innerHTML = getStars(0);
+            reviewCountElement.textContent = '0개';
         });
 
-    // 작은 세부 창 표시
-    miniDetailWindow.style.display = 'block';
+    // 세부 창 표시
+    detailWindow.style.display = 'block';
 }
 
-// 검색 결과 클릭 이벤트 수정
+// 창이 확장된 후 추가 내용 로드
+detailWindow.addEventListener('transitionend', function () {
+    if (detailWindow.classList.contains('expanded')) {
+        infoElement.textContent = currentMarker.info || '정보가 없습니다.';
+
+        // 리뷰 목록 가져오기
+        fetch(`https://api.mintsclover.com/reviews?placeId=${encodeURIComponent(currentMarker.text)}`)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                var reviews = data.reviews;
+
+                reviewsList.innerHTML = '';
+                reviews.forEach(function (review) {
+                    var li = document.createElement('li');
+                    li.innerHTML = `<strong>${review.user || '익명'}</strong> (${review.rating}/5): ${review.comment}`;
+                    reviewsList.appendChild(li);
+                });
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+                reviewsList.innerHTML = '<li>리뷰를 불러오는 중 오류가 발생하였습니다.</li>';
+            });
+    }
+});
+
+// 검색 결과 클릭 시 이벤트 수정
 // updateSearchResults 함수 내에서 resultItem 클릭 이벤트를 수정합니다.
 resultItem.addEventListener('click', function () {
     focusOnMarker(marker);
-    showMiniDetailWindow(marker); // 수정된 부분
+    showDetailWindow(marker);
     resultsContainer.style.display = 'none';
     document.getElementById('search-window').value = '';
 });
+
+// 마커 클릭 이벤트에서도 showDetailWindow 호출하도록 수정
+// saver.openlayers.js의 마커 클릭 이벤트 부분 수정
+// map.on('singleclick', function (evt) { ... } 부분에서 showDetailWindow(marker);를 호출하도록 변경
 

@@ -36,59 +36,50 @@
     <div id="map"></div>
 
     <!-- 세부 정보 -->
-    <div id="detail-window">
+    <div id="detail-window" class="small">
+        <!-- 작은 창 내용 -->
+        <div class="detail-content">
+            <div class="detail-text">
+                <h2 id="detail-title"></h2>
+                <div class="detail-rating">
+                    <span id="detail-rating-stars"></span>
+                    방문자 리뷰 <span id="detail-review-count"></span>
+                </div>
+                <p id="detail-address"></p>
+            </div>
+            <div class="detail-image">
+                <img id="detail-photo" src="" alt="">
+            </div>
+        </div>
+        <!-- 확장된 창에서만 보이는 내용 -->
+        <div class="detail-extra">
+            <div class="detail-info">
+                <p id="detail-info-text"></p>
+            </div>
+            <h3>리뷰</h3>
+            <ul id="detail-reviews">
+                <!-- 리뷰 항목이 여기에 추가됩니다 -->
+            </ul>
+            <h3>리뷰 작성</h3>
+            <form id="review-form">
+                <!-- 별점 입력을 위한 별점 선택 요소 추가 -->
+                <div class="star-rating-container">
+                    <div class="star-rating">
+                        <span data-value="5">★</span>
+                        <span data-value="4">★</span>
+                        <span data-value="3">★</span>
+                        <span data-value="2">★</span>
+                        <span data-value="1">★</span>
+                    </div>
+                    <span id="selected-rating">0점</span>
+                </div>
+                <textarea name="comment" placeholder="리뷰 작성란" required></textarea><br>
+                <button type="submit">등록</button>
+            </form>
+        </div>
         <button id="detail-close-button">×</button>
-        <div class="detail-header">
-            <h2 id="detail-title"></h2>
-            <p id="detail-type"></p>
-        </div>
-        <div class="detail-rating">
-            <span id="detail-rating-number"></span>
-            <span id="detail-rating-stars"></span>
-        </div>
-        <div class="detail-image">
-            <img id="detail-photo" src="" alt="" style="width:100%;">
-        </div>
-        <div class="detail-info">
-            <p id="detail-info-text"></p>
-        </div>
-        <h3>리뷰</h3>
-        <ul id="detail-reviews">
-            <!-- 리뷰 항목이 여기에 추가됩니다 -->
-        </ul>
-        <h3>리뷰 작성</h3>
-        <form id="review-form">
-            <!-- 별점 입력을 위한 별점 선택 요소 추가 -->
-            <div class="star-rating-container">
-                <div class="star-rating">
-                    <span data-value="5">★</span>
-                    <span data-value="4">★</span>
-                    <span data-value="3">★</span>
-                    <span data-value="2">★</span>
-                    <span data-value="1">★</span>
-                </div>
-                <span id="selected-rating">0점</span>
-            </div>
-            <textarea name="comment" placeholder="리뷰 작성란" required></textarea><br>
-            <button type="submit">등록</button>
-        </form>
     </div>
-    <!-- 작은 세부 창 -->
-    <div id="mini-detail-window">
-        <div class="mini-detail-content">
-            <div class="mini-detail-text">
-                <h2 id="mini-detail-title"></h2>
-                <div class="mini-detail-rating">
-                    <span id="mini-detail-rating-stars"></span>
-                    방문자 리뷰 <span id="mini-detail-review-count"></span>
-                </div>
-                <p id="mini-detail-address"></p>
-            </div>
-            <div class="mini-detail-image">
-                <img id="mini-detail-photo" src="" alt="">
-            </div>
-        </div>
-    </div>
+
 
 
     <!-- 보조메뉴 -->

@@ -174,123 +174,8 @@ div.ol-mouse-position {
     color: #666;
 }
 
+/* 세부 창 스타일 */
 #detail-window {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 350px;
-    height: 100%;
-    background-color: #fff;
-    overflow-y: auto;
-    display: none;
-    z-index: 1000;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-    font-family: 'Noto Sans KR', sans-serif;
-}
-
-#detail-window.mobile {
-    width: 100%;
-    height: 50%;
-    bottom: 0;
-    top: auto;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-}
-
-#detail-window .detail-header {
-    padding: 20px;
-    background-color: #3CB371;
-    color: #fff;
-    border-bottom: 1px solid #eee;
-}
-
-#detail-window .detail-header h2 {
-    margin: 0;
-    font-size: 24px;
-}
-
-#detail-window .detail-header p {
-    margin: 5px 0 0;
-    color: #666;
-    font-size: 14px;
-}
-
-#detail-window .detail-rating {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #333;
-}
-
-#detail-window .detail-rating span {
-    color: #FF5D5D;
-    font-size: 18px;
-}
-
-#detail-window .detail-image {
-    margin: 0px 0;
-}
-
-#detail-window .detail-image img {
-    width: 100%;
-    height: auto;
-}
-
-#detail-window .detail-info {
-    padding: 0 20px;
-    font-size: 14px;
-    color: #555;
-}
-
-#detail-window h3 {
-    padding: 0 20px;
-    font-size: 18px;
-    margin-top: 20px;
-}
-
-#detail-window ul {
-    list-style: none;
-    padding: 0 20px;
-}
-
-#detail-window ul li {
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
-}
-
-#detail-window ul li strong {
-    font-weight: bold;
-}
-
-#detail-window #review-form {
-    padding: 0 20px;
-}
-
-#detail-window #review-form input,
-#detail-window #review-form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    font-size: 14px;
-}
-
-#detail-window #review-form button {
-    width: 100%;
-    padding: 10px;
-    background-color: #3CB371;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-#detail-window #review-form button:hover {
-    background-color: #258b53;
-}
-
-/* 작은 세부 창 스타일 */
-#mini-detail-window {
-    display: none;
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -299,39 +184,53 @@ div.ol-mouse-position {
     border-top-right-radius: 15px;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
+    overflow: hidden;
+    display: none;
+    transition: height 0.3s;
 }
 
-.mini-detail-content {
+/* 작은 창 상태 */
+#detail-window.small {
+    height: 150px; /* 작은 창의 높이 */
+}
+
+/* 확장된 창 상태 */
+#detail-window.expanded {
+    height: 100%; /* 전체 높이로 확장 */
+}
+
+/* 상세 내용 */
+.detail-content {
     display: flex;
     padding: 15px;
 }
 
-.mini-detail-text {
+.detail-text {
     flex: 1;
 }
 
-.mini-detail-text h2 {
+.detail-text h2 {
     margin: 0;
     font-size: 20px;
 }
 
-.mini-detail-rating {
+.detail-rating {
     font-size: 14px;
     color: #666;
     margin: 5px 0;
 }
 
-.mini-detail-rating span {
+.detail-rating span {
     color: #FF5D5D;
     font-size: 16px;
 }
 
-.mini-detail-address {
+#detail-address {
     font-size: 14px;
     color: #555;
 }
 
-.mini-detail-image img {
+.detail-image img {
     width: 80px;
     height: 80px;
     object-fit: cover;
@@ -339,20 +238,65 @@ div.ol-mouse-position {
     margin-left: 15px;
 }
 
-/* 작은 세부 창 클릭 시 확대되는 애니메이션 */
-#mini-detail-window.expand {
-    animation: expandDetailWindow 0.3s forwards;
+/* 확장된 창에서만 보이는 내용 */
+.detail-extra {
+    display: none;
+    padding: 0 15px;
 }
 
-@keyframes expandDetailWindow {
-    from {
-        height: 150px; /* 작은 창의 높이 */
-    }
-    to {
-        height: 100%; /* 전체 창으로 확대 */
-    }
+#detail-window.expanded .detail-extra {
+    display: block;
 }
 
+#detail-window.expanded .detail-content {
+    flex-direction: column;
+}
+
+#detail-window.expanded .detail-image img {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    border-radius: 0;
+}
+
+/* 닫기 버튼 */
+#detail-close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    display: none;
+}
+
+#detail-window.expanded #detail-close-button {
+    display: block;
+}
+
+/* 데스크톱용 스타일 조정 */
+@media (min-width: 769px) {
+    #detail-window {
+        width: 350px;
+        height: 100%;
+        right: 0;
+        top: 0;
+        bottom: auto;
+        border-radius: 0;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 작은 창 상태 */
+    #detail-window.small {
+        height: auto;
+    }
+
+    /* 닫기 버튼 항상 표시 */
+    #detail-close-button {
+        display: block;
+    }
+}
 
 .star-rating {
     padding: 0 0 10px 0px;

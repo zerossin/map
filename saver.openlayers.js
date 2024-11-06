@@ -206,7 +206,7 @@ class Unmined {
 
                 if (feature && feature.get('markerData')) {
                     var marker = feature.get('markerData');
-                    showMiniDetailWindow(marker); // 수정된 부분
+                    showDetailWindow(marker);
                     focusOnMarker(marker);
                 }
             });
