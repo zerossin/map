@@ -205,9 +205,8 @@ class Unmined {
                 });
 
                 if (feature && feature.get('markerData')) {
-                    // 마커를 클릭한 경우
                     var marker = feature.get('markerData');
-                    showDetailWindow(marker);
+                    showMiniDetailWindow(marker); // 수정된 부분
                     focusOnMarker(marker);
                 }
             });

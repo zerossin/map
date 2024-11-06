@@ -295,3 +295,63 @@ closeButton.addEventListener('click', function () {
 });
 
 window.showDetailWindow = showDetailWindow;
+
+
+// 기존 코드 위에 추가 또는 수정
+
+// 작은 세부 창 요소 가져오기
+var miniDetailWindow = document.getElementById('mini-detail-window');
+var miniTitleElement = document.getElementById('mini-detail-title');
+var miniRatingStarsElement = document.getElementById('mini-detail-rating-stars');
+var miniReviewCountElement = document.getElementById('mini-detail-review-count');
+var miniPhotoElement = document.getElementById('mini-detail-photo');
+var miniAddressElement = document.getElementById('mini-detail-address');
+
+// 작은 세부 창 클릭 시 전체 세부 창으로 확장
+miniDetailWindow.addEventListener('click', function () {
+    miniDetailWindow.style.display = 'none';
+    showDetailWindow(currentMarker);
+});
+
+// showMiniDetailWindow 함수 추가
+function showMiniDetailWindow(marker) {
+    currentMarker = marker;
+
+    // 작은 세부 창에 데이터 채우기
+    miniTitleElement.textContent = marker.text;
+    miniPhotoElement.src = marker.photo || 'images/default.png';
+    miniPhotoElement.alt = marker.text;
+    miniAddressElement.textContent = marker.address || '주소 정보 없음';
+
+    // 서버에서 리뷰 및 별점 평균 가져오기
+    fetch(`https://api.mintsclover.com/reviews?placeId=${encodeURIComponent(marker.text)}`)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            var reviews = data.reviews;
+            var averageRating = data.averageRating;
+            var reviewCount = reviews.length;
+
+            miniRatingStarsElement.innerHTML = getStars(averageRating);
+            miniReviewCountElement.textContent = `${reviewCount}개`;
+        })
+        .catch(function (error) {
+            console.error('Error:', error);
+            miniRatingStarsElement.innerHTML = getStars(0);
+            miniReviewCountElement.textContent = '0개';
+        });
+
+    // 작은 세부 창 표시
+    miniDetailWindow.style.display = 'block';
+}
+
+// 검색 결과 클릭 이벤트 수정
+// updateSearchResults 함수 내에서 resultItem 클릭 이벤트를 수정합니다.
+resultItem.addEventListener('click', function () {
+    focusOnMarker(marker);
+    showMiniDetailWindow(marker); // 수정된 부분
+    resultsContainer.style.display = 'none';
+    document.getElementById('search-window').value = '';
+});
+
