@@ -302,12 +302,12 @@ div.ol-mouse-position {
 }
 
 .star-rating span:hover,
-.star-rating span:hover~span {
+.star-rating span:hover ~ span {
     color: #FF5D5D;
 }
 
 .star-rating span.selected,
-.star-rating span.selected~span {
+.star-rating span.selected ~ span {
     color: #FF5D5D;
 }
 
@@ -316,8 +316,6 @@ div.ol-mouse-position {
     font-size: 1.5em;
     color: #FF5D5D;
 }
-
-
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {

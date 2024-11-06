@@ -26,8 +26,6 @@ document.getElementById('menuBtn').addEventListener('click', function () {
     }
 });
 
-
-
 // 검색
 document.getElementById('search-window').addEventListener('input', function (e) {
     var query = e.target.value.toLowerCase();
@@ -69,13 +67,6 @@ function updateSearchResults(query) {
     resultsContainer.style.display = 'block';
 }
 
-resultItem.addEventListener('click', function () {
-    showDetailWindow(marker);
-    focusOnMarker(marker);
-    resultsContainer.style.display = 'none'; // 결과 목록 숨기기
-    document.getElementById('search-window').value = ''; // 검색창 초기화
-});
-
 function focusOnMarker(marker) {
     var coordinate = [marker.x, -marker.z];
     var view = map.getView();
@@ -84,8 +75,6 @@ function focusOnMarker(marker) {
     var detailWindow = document.getElementById('detail-window');
     var detailWindowWidth = detailWindow.offsetWidth || 0;
     var detailWindowHeight = detailWindow.offsetHeight || 0;
-
-    var mapSize = map.getSize(); // [width, height]
 
     var offsetX = 0;
     var offsetY = 0;
@@ -178,8 +167,33 @@ function handleReviewSubmit(e) {
     stars.forEach(function (s) {
         s.classList.remove('selected');
     });
+    document.getElementById('selected-rating').textContent = '0점';
 }
 
+// 별점 선택 기능 구현
+var selectedRating = 0;
+var stars = document.querySelectorAll('.star-rating span');
+
+stars.forEach(function (star) {
+    star.addEventListener('click', function () {
+        selectedRating = parseInt(star.getAttribute('data-value'));
+
+        // 모든 별에서 'selected' 클래스 제거
+        stars.forEach(function (s) {
+            s.classList.remove('selected');
+        });
+
+        // 선택된 별과 그 이전 별들에게 'selected' 클래스 추가
+        stars.forEach(function (s) {
+            if (parseInt(s.getAttribute('data-value')) <= selectedRating) {
+                s.classList.add('selected');
+            }
+        });
+
+        // 선택한 별점 값을 표시
+        document.getElementById('selected-rating').textContent = selectedRating + '점';
+    });
+});
 
 function showDetailWindow(marker) {
     var detailWindow = document.getElementById('detail-window');
@@ -243,5 +257,12 @@ function showDetailWindow(marker) {
     reviewForm.removeEventListener('submit', handleReviewSubmit);
     reviewForm.addEventListener('submit', handleReviewSubmit);
 }
+
+// 세부 정보 창 닫기 버튼 이벤트 처리
+var closeButton = document.getElementById('detail-close-button');
+closeButton.addEventListener('click', function () {
+    var detailWindow = document.getElementById('detail-window');
+    detailWindow.style.display = 'none';
+});
 
 window.showDetailWindow = showDetailWindow;
