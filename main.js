@@ -29,6 +29,11 @@ document.getElementById('menuBtn').addEventListener('click', function () {
     }
 });
 
+// 타이틀 클릭 시 새로고침
+document.getElementById('title').addEventListener('click', function () {
+    location.reload();
+});
+
 // 검색
 document.getElementById('search-window').addEventListener('input', function (e) {
     var query = e.target.value.toLowerCase();
