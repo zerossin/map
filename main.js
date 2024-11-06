@@ -11,6 +11,9 @@ if (UnminedPlayers && UnminedPlayers.length > 0) {
 
 unmined.map('map', UnminedMapProperties, UnminedRegions);
 
+// 현재 포커스 마커 레이어를 저장할 변수 선언
+var focusMarkerLayer = null;
+
 // 메뉴 버튼 클릭 이벤트 처리
 document.getElementById('menuBtn').addEventListener('click', function () {
     var subMenu = document.getElementById('subMenu');
@@ -69,7 +72,7 @@ function updateSearchResults(query) {
 
 function focusOnMarker(marker) {
     var coordinate = [marker.x, -marker.z];
-    var view = map.getView();
+    var view = unmined.openlayersMap.getView(); // 수정된 부분
     var resolution = view.getResolution();
 
     var detailWindow = document.getElementById('detail-window');
@@ -80,22 +83,48 @@ function focusOnMarker(marker) {
     var offsetY = 0;
 
     if (window.innerWidth <= 768) {
-        // 모바일 환경: 세부 정보 창이 아래쪽에 위치하므로 Y축으로 오프셋 적용
         offsetY = (detailWindowHeight / 2) * resolution;
     } else {
-        // 데스크톱 환경: 세부 정보 창이 오른쪽에 위치하므로 X축으로 오프셋 적용
         offsetX = (detailWindowWidth / 2) * resolution;
     }
 
     var adjustedCoordinate = [
-        coordinate[0] + offsetX, // X축 조정
-        coordinate[1] - offsetY  // Y축 조정
+        coordinate[0] + offsetX,
+        coordinate[1] - offsetY
     ];
 
     view.animate({
         center: adjustedCoordinate,
         duration: 300
     });
+
+    // 이전에 추가된 포커스 마커 레이어가 있다면 제거
+    if (focusMarkerLayer) {
+        unmined.openlayersMap.removeLayer(focusMarkerLayer); // 수정된 부분
+    }
+
+    // 새로운 마커 생성
+    var markerFeature = new ol.Feature({
+        geometry: new ol.geom.Point(coordinate)
+    });
+
+    markerFeature.setStyle(new ol.style.Style({
+        image: new ol.style.Icon({
+            src: 'pinImages/custom.pin.png',
+            anchor: [0.5, 1],
+            scale: 0.4
+        })
+    }));
+
+    var vectorSource = new ol.source.Vector({
+        features: [markerFeature]
+    });
+
+    focusMarkerLayer = new ol.layer.Vector({
+        source: vectorSource
+    });
+
+    unmined.openlayersMap.addLayer(focusMarkerLayer); // 수정된 부분
 }
 
 window.focusOnMarker = focusOnMarker;
@@ -135,7 +164,7 @@ function handleReviewSubmit(e) {
 
     // 리뷰 데이터를 서버로 전송
     var reviewData = {
-        placeId: currentMarker.text, // 장소 ID로 마커의 text 사용
+        placeId: currentMarker.text,
         rating: rating,
         comment: comment
     };
