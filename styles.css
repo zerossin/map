@@ -262,7 +262,7 @@ div.ol-mouse-position {
 }
 
 #detail-window #review-form {
-    padding: 20px;
+    padding: 0 20px;
 }
 
 #detail-window #review-form input,
@@ -277,7 +277,7 @@ div.ol-mouse-position {
 #detail-window #review-form button {
     width: 100%;
     padding: 10px;
-    background-color: #0078ff;
+    background-color: #3CB371;
     color: #fff;
     border: none;
     cursor: pointer;
@@ -285,8 +285,31 @@ div.ol-mouse-position {
 }
 
 #detail-window #review-form button:hover {
-    background-color: #005fcc;
+    background-color: #258b53;
 }
+
+.star-rating {
+    padding: 0 0 10px 0px;
+    direction: rtl;
+    font-size: 2em;
+    unicode-bidi: bidi-override;
+    display: inline-block;
+}
+
+.star-rating span {
+    cursor: pointer;
+    color: #ccc;
+}
+
+.star-rating span:hover,
+.star-rating span:hover~span {
+    color: #FF5D5D;
+}
+
+.star-rating .selected {
+    color: #FF5D5D;
+}
+
 
 
 /* 반응형 디자인 */

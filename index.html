@@ -66,8 +66,15 @@
         </ul>
         <h3>리뷰 작성</h3>
         <form id="review-form">
-            <input type="text" name="user" placeholder="이름" required><br>
-            <input type="number" name="rating" min="1" max="5" placeholder="평점 (1-5)" required><br>
+            <!-- 이름 입력란 제거 -->
+            <!-- 별점 입력을 위한 별점 선택 요소 추가 -->
+            <div class="star-rating">
+                <span data-value="5">★</span>
+                <span data-value="4">★</span>
+                <span data-value="3">★</span>
+                <span data-value="2">★</span>
+                <span data-value="1">★</span>
+            </div>
             <textarea name="comment" placeholder="댓글" required></textarea><br>
             <button type="submit">등록</button>
         </form>

@@ -108,20 +108,80 @@ function getStars(rating) {
     return starsHtml;
 }
 
+// 별점 선택 기능 구현
+var selectedRating = 0;
+var stars = document.querySelectorAll('.star-rating span');
+
+stars.forEach(function (star) {
+    star.addEventListener('click', function () {
+        selectedRating = parseInt(star.getAttribute('data-value'));
+        // 선택된 별점에 클래스 적용
+        stars.forEach(function (s) {
+            s.classList.remove('selected');
+        });
+        star.classList.add('selected');
+        var previousSiblings = getPreviousSiblings(star);
+        previousSiblings.forEach(function (s) {
+            s.classList.add('selected');
+        });
+    });
+});
+
+function getPreviousSiblings(elem) {
+    var siblings = [];
+    while (elem = elem.previousElementSibling) {
+        siblings.push(elem);
+    }
+    return siblings;
+}
+
 // 리뷰 폼 제출 이벤트 핸들러 정의
 function handleReviewSubmit(e) {
     e.preventDefault();
-    var user = e.target.user.value;
-    var rating = e.target.rating.value;
     var comment = e.target.comment.value;
+    var rating = selectedRating; // 사용자가 선택한 별점
 
-    if (!currentMarker.reviews) {
-        currentMarker.reviews = [];
+    if (rating === 0) {
+        alert('별점을 선택해주세요.');
+        return;
     }
 
-    currentMarker.reviews.push({ user: user, rating: rating, comment: comment });
-    showDetailWindow(currentMarker); // 업데이트된 내용으로 재렌더링
+    // 리뷰 데이터를 서버로 전송
+    var reviewData = {
+        placeId: currentMarker.text, // 장소 ID로 마커의 text 사용
+        rating: rating,
+        comment: comment
+    };
+
+    fetch('https://api.mintsclover.com/reviews', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reviewData)
+    })
+        .then(function (response) {
+            if (response.ok) {
+                alert('리뷰가 등록되었습니다.');
+                // 리뷰 목록 갱신
+                showDetailWindow(currentMarker);
+            } else {
+                alert('리뷰 등록에 실패하였습니다.');
+            }
+        })
+        .catch(function (error) {
+            console.error('Error:', error);
+            alert('리뷰 등록 중 오류가 발생하였습니다.');
+        });
+
+    // 폼 초기화
+    e.target.reset();
+    selectedRating = 0;
+    stars.forEach(function (s) {
+        s.classList.remove('selected');
+    });
 }
+
 
 function showDetailWindow(marker) {
     var detailWindow = document.getElementById('detail-window');
@@ -136,10 +196,6 @@ function showDetailWindow(marker) {
     var infoElement = document.getElementById('detail-info-text');
     var reviewsList = document.getElementById('detail-reviews');
 
-    var ratingValue = marker.rating || 0;
-    ratingElementStars.innerHTML = getStars(ratingValue);
-    ratingElementNumber.textContent = ratingValue.toFixed(1);
-
     // 값 채우기
     titleElement.textContent = marker.text;
     typeElement.textContent = marker.type || '';
@@ -147,14 +203,33 @@ function showDetailWindow(marker) {
     photoElement.alt = marker.text;
     infoElement.textContent = marker.info || '정보가 없습니다.';
 
-    // 리뷰 목록 초기화
-    reviewsList.innerHTML = '';
-    var reviews = marker.reviews || [];
-    reviews.forEach(function (review) {
-        var li = document.createElement('li');
-        li.innerHTML = `<strong>${review.user}</strong> (${review.rating}/5): ${review.comment}`;
-        reviewsList.appendChild(li);
-    });
+    // 서버에서 리뷰 및 별점 평균 가져오기
+    fetch(`https://api.mintsclover.com/reviews?placeId=${encodeURIComponent(marker.text)}`)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            // 별점 평균 계산 및 표시
+            var reviews = data.reviews;
+            var averageRating = data.averageRating;
+
+            ratingElementStars.innerHTML = getStars(averageRating);
+            ratingElementNumber.textContent = averageRating.toFixed(1);
+
+            // 리뷰 목록 표시
+            reviewsList.innerHTML = '';
+            reviews.forEach(function (review) {
+                var li = document.createElement('li');
+                li.innerHTML = `<strong>${review.user || '익명'}</strong> (${review.rating}/5): ${review.comment}`;
+                reviewsList.appendChild(li);
+            });
+        })
+        .catch(function (error) {
+            console.error('Error:', error);
+            ratingElementStars.innerHTML = getStars(0);
+            ratingElementNumber.textContent = '0.0';
+            reviewsList.innerHTML = '<li>리뷰를 불러오는 중 오류가 발생하였습니다.</li>';
+        });
 
     detailWindow.style.display = 'block';
 
