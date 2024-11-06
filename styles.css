@@ -275,6 +275,122 @@ div.ol-mouse-position {
     display: block;
 }
 
+/* 리뷰 리스트 스타일 */
+#detail-window ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#detail-window ul li {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+}
+
+#detail-window ul li:last-child {
+    border-bottom: none;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.review-user {
+    font-weight: bold;
+    margin-right: 10px;
+    color: #333;
+}
+
+.review-rating {
+    color: #FF5D5D;
+    margin-right: 10px;
+}
+
+.review-date {
+    margin-left: auto;
+    font-size: 12px;
+    color: #999;
+}
+
+.review-comment {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.4;
+}
+
+/* 리뷰 작성 폼 스타일 */
+#review-form {
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #eee;
+}
+
+#review-form textarea {
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+#review-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #3CB371;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#review-form button:hover {
+    background-color: #2e8b57;
+}
+
+/* 별점 선택 스타일 */
+.star-rating-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    font-size: 24px;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    color: #ccc;
+    cursor: pointer;
+    margin: 0 2px;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input:checked ~ label {
+    color: #FF5D5D;
+}
+
+#selected-rating {
+    margin-left: 10px;
+    font-size: 16px;
+    color: #FF5D5D;
+}
+
 /* 데스크톱용 스타일 조정 */
 @media (min-width: 769px) {
     #detail-window {

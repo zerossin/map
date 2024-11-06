@@ -201,28 +201,16 @@ function handleReviewSubmit(e) {
 
 // 별점 선택 기능 구현
 var selectedRating = 0;
-var stars = document.querySelectorAll('.star-rating span');
 
-stars.forEach(function (star) {
-    star.addEventListener('click', function () {
-        selectedRating = parseInt(star.getAttribute('data-value'));
-
-        // 모든 별에서 'selected' 클래스 제거
-        stars.forEach(function (s) {
-            s.classList.remove('selected');
-        });
-
-        // 선택된 별과 그 이전 별들에게 'selected' 클래스 추가
-        stars.forEach(function (s) {
-            if (parseInt(s.getAttribute('data-value')) <= selectedRating) {
-                s.classList.add('selected');
-            }
-        });
-
+var starInputs = document.querySelectorAll('.star-rating input');
+starInputs.forEach(function(input) {
+    input.addEventListener('change', function() {
+        selectedRating = parseInt(this.value);
         // 선택한 별점 값을 표시
         document.getElementById('selected-rating').textContent = selectedRating + '점';
     });
 });
+
 
 function showDetailWindow(marker) {
     var detailWindow = document.getElementById('detail-window');

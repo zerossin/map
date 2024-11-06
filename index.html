@@ -62,18 +62,22 @@
             </ul>
             <h3>리뷰 작성</h3>
             <form id="review-form">
-                <!-- 별점 입력을 위한 별점 선택 요소 추가 -->
                 <div class="star-rating-container">
                     <div class="star-rating">
-                        <span data-value="5">★</span>
-                        <span data-value="4">★</span>
-                        <span data-value="3">★</span>
-                        <span data-value="2">★</span>
-                        <span data-value="1">★</span>
+                        <input type="radio" id="star5" name="rating" value="5">
+                        <label for="star5">★</label>
+                        <input type="radio" id="star4" name="rating" value="4">
+                        <label for="star4">★</label>
+                        <input type="radio" id="star3" name="rating" value="3">
+                        <label for="star3">★</label>
+                        <input type="radio" id="star2" name="rating" value="2">
+                        <label for="star2">★</label>
+                        <input type="radio" id="star1" name="rating" value="1">
+                        <label for="star1">★</label>
                     </div>
                     <span id="selected-rating">0점</span>
                 </div>
-                <textarea name="comment" placeholder="리뷰 작성란" required></textarea><br>
+                <textarea name="comment" placeholder="리뷰를 작성해주세요." required></textarea>
                 <button type="submit">등록</button>
             </form>
         </div>
