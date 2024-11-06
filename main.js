@@ -338,7 +338,17 @@ function showDetailWindow(marker) {
 
     // 기본 정보 채우기
     titleElement.textContent = marker.text;
-    photoElement.src = marker.photo || 'images/default.png';
+    // 이미지 파일 경로 설정
+    var imageExtensions = ['png', 'jpg', 'jpeg'];
+    var imagePath = '';
+    for (var i = 0; i < imageExtensions.length; i++) {
+        var path = `mImages/${marker.text}.${imageExtensions[i]}`;
+        if (imageExists(path)) {
+            imagePath = path;
+            break;
+        }
+    }
+    photoElement.src = imagePath || 'images/default.png';
     photoElement.alt = marker.text;
     addressElement.textContent = marker.address ? `${marker.address} (${marker.x}, ${marker.z})` : `주소 정보 없음 (${marker.x}, ${marker.z})`;
 
@@ -350,7 +360,7 @@ function showDetailWindow(marker) {
 
         // 지하철 역 정보 표시
         var subwayInfoElement = document.getElementById('detail-subway-info');
-        subwayInfoElement.innerHTML = `${nearest.station.text} ${distances.straightDistance} · 도보 ${distances.walkingTime}분`;
+        subwayInfoElement.innerHTML = `${nearest.line} ${nearest.station.text} ${distances.straightDistance} · 도보 ${distances.walkingTime}분`;
     } else {
         // 지하철 역이 없을 경우 처리
         var subwayInfoElement = document.getElementById('detail-subway-info');
@@ -425,9 +435,15 @@ resultItem.addEventListener('click', function () {
 // map.on('singleclick', function (evt) { ... } 부분에서 showDetailWindow(marker);를 호출하도록 변경
 
 function findNearestSubwayStation(marker) {
-    var lineColors = [line1Color, line2Color, line3Color, line4Color];
+    var lineColors = {
+        [line1Color]: "1호선",
+        [line2Color]: "2호선",
+        [line3Color]: "3호선",
+        [line4Color]: "4호선"
+    };
+
     var subwayStations = UnminedCustomMarkers.markers.filter(function (m) {
-        return lineColors.includes(m.textStrokeColor);
+        return Object.keys(lineColors).includes(m.textStrokeColor);
     });
 
     var minDistance = Infinity;
@@ -446,13 +462,14 @@ function findNearestSubwayStation(marker) {
 
     return {
         station: nearestStation,
-        distance: minDistance
+        distance: minDistance,
+        line: nearestStation ? lineColors[nearestStation.textStrokeColor] : null
     };
 }
 
 function calculateDistancesAndTime(distance) {
     // 직선 거리의 %1.4의 정수 부분에 'm' 단위를 붙입니다.
-    var straightDistanceMod = Math.floor(distance / 1.4);
+    var straightDistanceMod = Math.floor(distance / 1.3);
     var straightDistanceStr = straightDistanceMod + 'm';
 
     // 도보 거리 계산 (직선 거리의 약 1.57배)
