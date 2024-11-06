@@ -81,9 +81,10 @@ function focusOnMarker(marker) {
     var view = map.getView(); // 이제 전역 변수 map을 사용합니다.
     view.animate({
         center: coordinate,
-        duration: 1000 // 1초 동안 애니메이션
+        duration: 300 // 0.3초 동안 애니메이션
     });
 }
+window.focusOnMarker = focusOnMarker;
 
 // 현재 마커를 저장할 변수 선언
 var currentMarker = null;
@@ -142,7 +143,7 @@ function showDetailWindow(marker) {
     // 값 채우기
     titleElement.textContent = marker.text;
     typeElement.textContent = marker.type || '';
-    photoElement.src = marker.photo || 'default.jpg';
+    photoElement.src = marker.photo || 'images/default.png';
     photoElement.alt = marker.text;
     infoElement.textContent = marker.info || '정보가 없습니다.';
 
@@ -169,3 +170,5 @@ function showDetailWindow(marker) {
     reviewForm.removeEventListener('submit', handleReviewSubmit);
     reviewForm.addEventListener('submit', handleReviewSubmit);
 }
+
+window.showDetailWindow = showDetailWindow;

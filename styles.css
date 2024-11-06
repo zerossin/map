@@ -161,6 +161,8 @@ div.ol-mouse-position {
 }
 
 .result-title {
+    color: black;
+    font-family: 'Noto Sans KR', sans-serif;
     font-size: 16px;
     font-weight: bold;
 }
@@ -196,6 +198,8 @@ div.ol-mouse-position {
 
 #detail-window .detail-header {
     padding: 20px;
+    background-color: #3CB371;
+    color: #fff;
     border-bottom: 1px solid #eee;
 }
 
@@ -211,13 +215,18 @@ div.ol-mouse-position {
 }
 
 #detail-window .detail-rating {
-    padding: 0 20px;
+    padding: 10px 20px;
     font-size: 16px;
     color: #333;
 }
 
+#detail-window .detail-rating span {
+    color: #FF5D5D;
+    font-size: 18px;
+}
+
 #detail-window .detail-image {
-    margin: 20px 0;
+    margin: 0px 0;
 }
 
 #detail-window .detail-image img {
@@ -277,18 +286,6 @@ div.ol-mouse-position {
 
 #detail-window #review-form button:hover {
     background-color: #005fcc;
-}
-
-#detail-window .detail-rating {
-    padding: 0 20px;
-    font-size: 16px;
-    color: #333;
-}
-
-#detail-window .detail-rating span {
-    color: #ffcc00;
-    /* 별색 */
-    font-size: 18px;
 }
 
 

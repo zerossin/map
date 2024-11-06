@@ -175,6 +175,43 @@ class Unmined {
                     map.addLayer(markersLayer);
                 }
             });
+
+            // 마커 클릭 이벤트 처리 코드 추가
+            var clickTolerance = 5;
+            var startPixel = null;
+            var hitToleranceValue = 10; // 클릭 판정 범위 (픽셀 단위)
+
+            map.on('pointerdown', function (evt) {
+                startPixel = evt.pixel;
+            });
+
+            map.on('singleclick', function (evt) {
+                if (!startPixel) return;
+
+                var endPixel = evt.pixel;
+                var deltaX = Math.abs(endPixel[0] - startPixel[0]);
+                var deltaY = Math.abs(endPixel[1] - startPixel[1]);
+                var distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+                if (distance > clickTolerance) {
+                    // 드래그로 간주하고 클릭 이벤트 무시
+                    return;
+                }
+
+                var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+                    return feature;
+                }, {
+                    hitTolerance: hitToleranceValue
+                });
+
+                if (feature && feature.get('markerData')) {
+                    // 마커를 클릭한 경우
+                    var marker = feature.get('markerData');
+                    focusOnMarker(marker);
+                    showDetailWindow(marker);
+                }
+            });
+
         }
 
         if (options.background) {
@@ -201,7 +238,8 @@ class Unmined {
                 var latitude = item.z;
 
                 var feature = new ol.Feature({
-                    geometry: new ol.geom.Point(ol.proj.transform([longitude, latitude], dataProjection, viewProjection))
+                    geometry: new ol.geom.Point(ol.proj.transform([longitude, latitude], dataProjection, viewProjection)),
+                    markerData: item // markerData 속성 설정
                 });
 
                 var style = new ol.style.Style();
