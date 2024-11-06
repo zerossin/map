@@ -340,15 +340,17 @@ function showDetailWindow(marker) {
     titleElement.textContent = marker.text;
     // 이미지 파일 경로 설정
     var imageExtensions = ['png', 'jpg', 'jpeg'];
-    var imagePath = '';
-    for (var i = 0; i < imageExtensions.length; i++) {
-        var path = `mImages/${marker.text}.${imageExtensions[i]}`;
-        if (imageExists(path)) {
-            imagePath = path;
-            break;
+    var imagePath = `mImages/${marker.text}.png`; // 기본 경로 설
+    // 이미지가 로드되지 않으면 다른 확장자를 시도
+    photoElement.onerror = function() {
+        var currentExtension = imageExtensions.shift();
+        if (currentExtension) {
+            photoElement.src = `mImages/${marker.text}.${currentExtension}`;
+        } else {
+            photoElement.src = 'images/default.png'; // 모든 시도가 실패하면 기본 이미지 사용
         }
-    }
-    photoElement.src = imagePath || 'images/default.png';
+    };
+    photoElement.src = imagePath;
     photoElement.alt = marker.text;
     addressElement.textContent = marker.address ? `${marker.address} (${marker.x}, ${marker.z})` : `주소 정보 없음 (${marker.x}, ${marker.z})`;
 
