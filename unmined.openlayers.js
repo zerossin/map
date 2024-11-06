@@ -136,7 +136,7 @@ class Unmined {
                 mousePositionControl
             ]),
             layers: [
-                unminedLayer,                
+                unminedLayer,
                 /*
                 new ol.layer.Tile({
                     source: new ol.source.TileDebug({
@@ -166,7 +166,7 @@ class Unmined {
 
             map.getView().on('change:resolution', () => {
                 var currentZoom = map.getView().getZoom();
-                if(currentZoom % 1 == 0){
+                if (currentZoom % 1 == 0) {
                     //console.log("Current Zoom Level:", currentZoom); // 디버깅용 콘솔 로그
                     markersLayer.getSource().clear();
                     var newMarkersLayer = this.createMarkersLayer(options.markers, dataProjection, viewProjection, currentZoom);
@@ -176,12 +176,14 @@ class Unmined {
                 }
             });
         }
-        
-        if (options.background){
+
+        if (options.background) {
             document.getElementById(mapId).style.backgroundColor = options.background;
         }
 
         this.openlayersMap = map;
+        // 여기서 전역으로 노출
+        window.map = map; // 이 줄을 추가합니다.
     }
 
     createMarkersLayer(markers, dataProjection, viewProjection, currentZoom) {
@@ -194,7 +196,7 @@ class Unmined {
 
             if ((item.minZoom === undefined || currentZoom >= item.minZoom) &&
                 (item.maxZoom === undefined || currentZoom <= item.maxZoom)) {
-                
+
                 var longitude = item.x;
                 var latitude = item.z;
 
@@ -210,7 +212,7 @@ class Unmined {
                         scale: item.imageScale
                     }));
 
-                if (item.text) {                               
+                if (item.text) {
                     style.setText(new ol.style.Text({
                         text: item.text,
                         font: item.font,
@@ -249,7 +251,7 @@ class Unmined {
         });
         return vectorLayer;
     }
-    
+
     defaultPlayerMarkerStyle = {
         image: "playerimages/default.png",
         imageAnchor: [0.5, 0.5],

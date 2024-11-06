@@ -1,0 +1,304 @@
+@font-face {
+    font-family: 'YClover-Bold';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_231029@1.1/YClover-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+    align-content: center;
+    position: relative;
+}
+
+header div {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+header div div {
+    padding-top: 7px;
+    font-family: 'YClover-Bold';
+    font-size: 1.5em;
+    color: #3CB371;
+    text-align: center;
+}
+
+header div img {
+    z-index: 3;
+    position: absolute;
+    width: 20px;
+    left: 15px;
+    cursor: pointer;
+}
+
+header #search-window {
+    width: calc(100% - 10px);
+    box-sizing: border-box;
+    height: 30px;
+    margin: 5px;
+    padding: 0 10px;
+    background-color: #F2F3F5;
+    border: none;
+    outline: none;
+}
+
+.sub-menu {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%);
+    width: 200px;
+    height: 100%;
+    background-color: white;
+    display: none;
+    z-index: 2;
+}
+
+#iconBox {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.icon {
+    font-size: 2.5rem;
+    color: black;
+    text-decoration: none;
+}
+
+.no_dot {
+    margin: 20px;
+    padding: 0;
+    list-style-type: none;
+}
+
+.no_dot li {
+    display: inline-block;
+}
+
+.dark-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+    display: none;
+}
+
+#map {
+    height: calc(100% - 78px);
+    width: 100%;
+    image-rendering: pixelated;
+}
+
+.mouseposition {
+    background-color: white;
+    padding: 3px;
+    text-align: right;
+}
+
+.mousepositioncoord {
+    min-width: 40px;
+    display: inline-block;
+}
+
+div.ol-mouse-position {
+    background-color: white;
+    padding: 6px;
+    border-radius: 3px;
+    box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 검색창과 검색 결과 컨테이너를 감싸는 래퍼 */
+.search-container {
+    position: relative;
+    width: 100%;
+}
+
+#search-window {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    display: none;
+    z-index: 1000;
+}
+
+.result-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.result-item:hover {
+    background-color: #f9f9f9;
+}
+
+.result-title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.result-type,
+.result-status,
+.result-reviews {
+    font-size: 14px;
+    color: #666;
+}
+
+#detail-window {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 350px;
+    height: 100%;
+    background-color: #fff;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+#detail-window.mobile {
+    width: 100%;
+    height: 50%;
+    bottom: 0;
+    top: auto;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#detail-window .detail-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+#detail-window .detail-header h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+#detail-window .detail-header p {
+    margin: 5px 0 0;
+    color: #666;
+    font-size: 14px;
+}
+
+#detail-window .detail-rating {
+    padding: 0 20px;
+    font-size: 16px;
+    color: #333;
+}
+
+#detail-window .detail-image {
+    margin: 20px 0;
+}
+
+#detail-window .detail-image img {
+    width: 100%;
+    height: auto;
+}
+
+#detail-window .detail-info {
+    padding: 0 20px;
+    font-size: 14px;
+    color: #555;
+}
+
+#detail-window h3 {
+    padding: 0 20px;
+    font-size: 18px;
+    margin-top: 20px;
+}
+
+#detail-window ul {
+    list-style: none;
+    padding: 0 20px;
+}
+
+#detail-window ul li {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+#detail-window ul li strong {
+    font-weight: bold;
+}
+
+#detail-window #review-form {
+    padding: 20px;
+}
+
+#detail-window #review-form input,
+#detail-window #review-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+#detail-window #review-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #0078ff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#detail-window #review-form button:hover {
+    background-color: #005fcc;
+}
+
+#detail-window .detail-rating {
+    padding: 0 20px;
+    font-size: 16px;
+    color: #333;
+}
+
+#detail-window .detail-rating span {
+    color: #ffcc00;
+    /* 별색 */
+    font-size: 18px;
+}
+
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    #detail-window {
+        width: 100%;
+        height: 50%;
+        bottom: 0;
+        top: auto;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    }
+}
