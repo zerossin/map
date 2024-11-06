@@ -1411,7 +1411,6 @@ UnminedCustomMarkers = {
             font: "bold 15px Calibri,sans serif",
             minZoom: 7,
             maxZoom: 8,
-            info: "성동구에서 있는 유일한 사원이자 의회이다. 과거 미지국에 온 이방인이 지어준 건물이다. 원래는 미지국의 수도로 사용되었으나, 이슬람제국에 점령당한 후 이들은 모스크로 개조당했다. 이후 수민국에 점령된 후 방치되었으나, 성동구 산하에 넘어간 후 무너진 건물을 복원한 후, 의회로 사용중이다. 다만 이슬람 인원들에 의해 라마단 기간에는 의회활동을 멈추고 이슬람교도들을 위해 자리를 비워준다.",
         },
         {
             x: 1769,
@@ -1428,7 +1427,6 @@ UnminedCustomMarkers = {
             font: "bold 20px Calibri,sans serif",
             minZoom: 5,
             maxZoom: 8,
-            info: "성동구 행정을 맡는 성동구청입니다.",
         },
         {
             x: 1987,
@@ -1445,7 +1443,6 @@ UnminedCustomMarkers = {
             font: "bold 15px Calibri,sans serif",
             minZoom: 6,
             maxZoom: 8,
-            info: "성동구에 있는 성동성경기장이다. 주로 축구 경기가 열리며, 성동구민들의 휴식처로 알려져 있다.",
         },
         {
             x: 1119,
@@ -1462,7 +1459,6 @@ UnminedCustomMarkers = {
             font: "bold 15px Calibri,sans serif",
             minZoom: 7,
             maxZoom: 8,
-            info: "성동구에 있는 성동시민아파트이다. 성동구민들의 주거지로 알려져 있다.",
         },
         {
             x: -1000,
@@ -1478,7 +1474,6 @@ UnminedCustomMarkers = {
             font: "bold 20px Calibri,sans serif",
             minZoom: 3,
             maxZoom: 4,
-            info: "성북구는 수민특별시의 5개 구 중 하나로, 수민특별시의 북쪽에 위치해 있다. 수민시의 주거지로 알려져 있다.",
         },
         {
             x: -4000,
@@ -2168,7 +2163,6 @@ UnminedCustomMarkers = {
             font: "bold 15px Calibri,sans serif",
             minZoom: 7,
             maxZoom: 8,
-            info: "과거 미지도호부가 있던 자리였으나 전란으로 인해 불타 사라진 자리에 다시 세워진 건물이다. 미지정의 그 역사를 존중하여 성내구에서 기존의 도민궁에 쓰이던 건축물을 제공하였다. 즉 이 건물이 도민궁에 있는 것에 원조이다. 안에 있는 왕좌는 아무도 앉을 수 없는데, 이는 국가유공자의 넋만이 앉을 수 있다는 의미이기도 하다.",
         },
         {
             x: -487,
@@ -2261,7 +2255,6 @@ UnminedCustomMarkers = {
             font: "bold 15px Calibri,sans serif",
             minZoom: 7,
             maxZoom: 8,
-            info: "행정부 기관들이 머무는 정부청사본관입니다.",
         },
         {
             x: -90,

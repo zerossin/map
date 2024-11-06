@@ -322,7 +322,29 @@ function showDetailWindow(marker) {
 // 창이 확장된 후 추가 내용 로드
 detailWindow.addEventListener('transitionend', function () {
     if (detailWindow.classList.contains('expanded')) {
-        infoElement.textContent = currentMarker.info || '정보가 없습니다.';
+        //api 요청
+        // 질문을 담은 객체
+        const questionData = {
+            question: currentMarker.text
+        };
+
+        // Flask API에 POST 요청 보내기
+        fetch('https://test.kevalsil.com/map_data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(questionData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            infoElement.textContent = currentMarker.info || data.message;
+            console.log("응답 메시지:", data.message);
+        })
+        .catch(error => {
+            infoElement.textContent = currentMarker.info || '정보가 없습니다.';
+            console.error("에러 발생:", error);
+        });
 
         // 리뷰 목록 가져오기
         fetch(`https://api.mintsclover.com/reviews?placeId=${encodeURIComponent(currentMarker.text)}`)

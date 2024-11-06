@@ -250,6 +250,10 @@ div.ol-mouse-position {
     padding: 0 15px;
 }
 
+.detail-info {
+    color: #555;
+}
+
 #detail-window.expanded .detail-extra {
     display: block;
 }
