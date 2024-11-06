@@ -179,7 +179,7 @@ class Unmined {
             // 마커 클릭 이벤트 처리 코드 추가
             var clickTolerance = 5;
             var startPixel = null;
-            var hitToleranceValue = 10; // 클릭 판정 범위 (픽셀 단위)
+            var hitToleranceValue = 20; // 클릭 판정 범위 (픽셀 단위)
 
             map.on('pointerdown', function (evt) {
                 startPixel = evt.pixel;

@@ -94,6 +94,22 @@ UnminedCustomMarkers = {
         // add your markers here
         //ㄱ
         {
+            x: 2114,
+            z: -1407,
+            image: "pinImages/normal.pin.svg",
+            imageAnchor: [0.5, 0.5],
+            imageScale: 0.05,
+            text: "갑산감옥",
+            textColor: "white",
+            textStrokeColor: "black",
+            textStrokeWidth: 3,
+            offsetX: 0,
+            offsetY: 20,
+            font: "bold 15px Calibri,sans serif",
+            minZoom: 7,
+            maxZoom: 8,
+        },
+        {
             x: 868,
             z: -8,
             image: "pinImages/heritage.pin.svg",

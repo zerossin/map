@@ -153,7 +153,7 @@ function getStars(rating) {
     for (var i = 0; i < emptyStars; i++) {
         starsHtml += '☆';
     }
-    return starsHtml;
+    return `${rating.toFixed(1)} ${starsHtml}`;
 }
 
 // 별점 선택 기능 구현
