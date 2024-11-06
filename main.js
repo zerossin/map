@@ -337,6 +337,21 @@ function showDetailWindow(marker) {
     photoElement.alt = marker.text;
     addressElement.textContent = marker.address ? `${marker.address} (${marker.x}, ${marker.z})` : `주소 정보 없음 (${marker.x}, ${marker.z})`;
 
+    // 가장 가까운 지하철 역 찾기
+    var nearest = findNearestSubwayStation(marker);
+
+    if (nearest.station) {
+        var distances = calculateDistancesAndTime(nearest.distance);
+
+        // 지하철 역 정보 표시
+        var subwayInfoElement = document.getElementById('detail-subway-info');
+        subwayInfoElement.innerHTML = `${nearest.station.text} ${distances.straightDistance} · 도보 ${distances.walkingTime}분`;
+    } else {
+        // 지하철 역이 없을 경우 처리
+        var subwayInfoElement = document.getElementById('detail-subway-info');
+        subwayInfoElement.textContent = '근처에 지하철 역이 없습니다.';
+    }
+
     // 추가 내용 초기화
     infoElement.textContent = '';
     reviewsList.innerHTML = '';
@@ -403,4 +418,47 @@ resultItem.addEventListener('click', function () {
 // 마커 클릭 이벤트에서도 showDetailWindow 호출하도록 수정
 // saver.openlayers.js의 마커 클릭 이벤트 부분 수정
 // map.on('singleclick', function (evt) { ... } 부분에서 showDetailWindow(marker);를 호출하도록 변경
+
+function findNearestSubwayStation(marker) {
+    var lineColors = [line1Color, line2Color, line3Color, line4Color];
+    var subwayStations = UnminedCustomMarkers.markers.filter(function (m) {
+        return lineColors.includes(m.textStrokeColor);
+    });
+
+    var minDistance = Infinity;
+    var nearestStation = null;
+
+    subwayStations.forEach(function (station) {
+        var dx = station.x - marker.x;
+        var dz = station.z - marker.z;
+        var distance = Math.sqrt(dx * dx + dz * dz);
+
+        if (distance < minDistance) {
+            minDistance = distance;
+            nearestStation = station;
+        }
+    });
+
+    return {
+        station: nearestStation,
+        distance: minDistance
+    };
+}
+
+function calculateDistancesAndTime(distance) {
+    // 직선 거리의 %1.4의 정수 부분에 'm' 단위를 붙입니다.
+    var straightDistanceMod = Math.floor(distance / 1.4);
+    var straightDistanceStr = straightDistanceMod + 'm';
+
+    // 도보 거리 계산 (직선 거리의 약 1.57배)
+    var walkingDistance = distance * 1.57;
+
+    // 도보 시간 계산 (평균 보행 속도: 83.33 m/min)
+    var walkingTime = Math.round(walkingDistance / 83.33);
+
+    return {
+        straightDistance: straightDistanceStr,
+        walkingTime: walkingTime
+    };
+}
 

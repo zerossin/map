@@ -35,20 +35,20 @@ You can use https://mapmarker.io/editor to generate custom pin images.
 Use the imageScale property if the pin image is too large.
 
 */
-line1Color = "#253B94";
-line2Color = "#3AB449";
-line3Color = "#dc5700";
-line4Color = "#1b91bf";
+var line1Color = "#253B94";
+var line2Color = "#3AB449";
+var line3Color = "#dc5700";
+var line4Color = "#1b91bf";
 
-cultureColor = "#BD91BD";
-heritageColor = "#A2895F";
-hospitalColor = "#FBCECE";
-hotelColor = "#D6C8FF";
-houseColor = "#D9BC98";
-natureColor = "#C5FFAC";
-restaurantColor = "#FFC36F";
-sportColor = "#CDFDFD";
-universityColor = "#8CCFF9";
+var cultureColor = "#BD91BD";
+var heritageColor = "#A2895F";
+var hospitalColor = "#FBCECE";
+var hotelColor = "#D6C8FF";
+var houseColor = "#D9BC98";
+var natureColor = "#C5FFAC";
+var restaurantColor = "#FFC36F";
+var sportColor = "#CDFDFD";
+var universityColor = "#8CCFF9";
 
 UnminedCustomMarkers = {
 

@@ -231,6 +231,11 @@ div.ol-mouse-position {
     color: #555;
 }
 
+#detail-subway-info {
+    font-size: 14px;
+    color: #555;
+}
+
 .detail-image img {
     width: 80px;
     height: 80px;
