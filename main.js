@@ -338,7 +338,7 @@ detailWindow.addEventListener('transitionend', function () {
         })
         .then(response => response.json())
         .then(data => {
-            infoElement.textContent = currentMarker.info || data.message;
+            infoElement.textContent = currentMarker.info || data.message || '정보가 없습니다.';
             console.log("응답 메시지:", data.message);
         })
         .catch(error => {

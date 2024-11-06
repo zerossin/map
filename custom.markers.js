@@ -845,6 +845,22 @@ UnminedCustomMarkers = {
 
         //ㄹ
         {
+            x: 235,
+            z: 290,
+            image: "pinImages/bakery.pin.svg",
+            imageAnchor: [0.5, 0.5],
+            imageScale: 0.05,
+            text: "런던바게트",
+            textColor: restaurantColor,
+            textStrokeColor: "black",
+            textStrokeWidth: 3,
+            offsetX: 0,
+            offsetY: 20,
+            font: "bold 15px Calibri,sans serif",
+            minZoom: 7,
+            maxZoom: 8,
+        },
+        {
             x: 76,
             z: 1267,
             image: "pinImages/house.pin.svg",
@@ -2698,22 +2714,6 @@ UnminedCustomMarkers = {
         },
 
         //ㅍ
-        {
-            x: 235,
-            z: 290,
-            image: "pinImages/bakery.pin.svg",
-            imageAnchor: [0.5, 0.5],
-            imageScale: 0.05,
-            text: "파리바게트",
-            textColor: restaurantColor,
-            textStrokeColor: "black",
-            textStrokeWidth: 3,
-            offsetX: 0,
-            offsetY: 20,
-            font: "bold 15px Calibri,sans serif",
-            minZoom: 7,
-            maxZoom: 8,
-        },
         {
             x: 146,
             z: 1094,
