@@ -136,7 +136,7 @@ class Unmined {
                 mousePositionControl
             ]),
             layers: [
-                unminedLayer,
+                unminedLayer,                
                 /*
                 new ol.layer.Tile({
                     source: new ol.source.TileDebug({
@@ -161,123 +161,64 @@ class Unmined {
         });
 
         if (options.markers) {
-            var markersLayer = this.createMarkersLayer(options.markers, dataProjection, viewProjection, map.getView().getZoom());
+            var markersLayer = this.createMarkersLayer(options.markers, dataProjection, viewProjection);
             map.addLayer(markersLayer);
-
-            map.getView().on('change:resolution', () => {
-                var currentZoom = map.getView().getZoom();
-                if (currentZoom % 1 == 0) {
-                    //console.log("Current Zoom Level:", currentZoom); // 디버깅용 콘솔 로그
-                    markersLayer.getSource().clear();
-                    var newMarkersLayer = this.createMarkersLayer(options.markers, dataProjection, viewProjection, currentZoom);
-                    map.removeLayer(markersLayer);
-                    markersLayer = newMarkersLayer;
-                    map.addLayer(markersLayer);
-                }
-            });
-
-            // 마커 클릭 이벤트 처리 코드 추가
-            var clickTolerance = 20;
-            var startPixel = null;
-            var hitToleranceValue = 20; // 클릭 판정 범위 (픽셀 단위)
-
-            map.on('pointerdown', function (evt) {
-                startPixel = evt.pixel;
-            });
-
-            map.on('singleclick', function (evt) {
-                if (!startPixel) return;
-
-                var endPixel = evt.pixel;
-                var deltaX = Math.abs(endPixel[0] - startPixel[0]);
-                var deltaY = Math.abs(endPixel[1] - startPixel[1]);
-                var distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-                if (distance > clickTolerance) {
-                    // 드래그로 간주하고 클릭 이벤트 무시
-                    return;
-                }
-
-                var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
-                    return feature;
-                }, {
-                    hitTolerance: hitToleranceValue
-                });
-
-                if (feature && feature.get('markerData')) {
-                    var marker = feature.get('markerData');
-                    showDetailWindow(marker);
-                    focusOnMarker(marker);
-                }
-            });
-
         }
-
-        if (options.background) {
+        
+        if (options.background){
             document.getElementById(mapId).style.backgroundColor = options.background;
         }
 
         this.openlayersMap = map;
-        // 여기서 전역으로 노출
-        window.map = map; // 이 줄을 추가합니다.
     }
 
-    createMarkersLayer(markers, dataProjection, viewProjection, currentZoom) {
+    createMarkersLayer(markers, dataProjection, viewProjection) {
         var features = [];
 
         for (var i = 0; i < markers.length; i++) {
             var item = markers[i];
+            var longitude = item.x;
+            var latitude = item.z;
 
-            //console.log(`Marker: ${item.text}, MinZoom: ${item.minZoom}, MaxZoom: ${item.maxZoom}, CurrentZoom: ${currentZoom}`); // 디버깅용 콘솔 로그
+            var feature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.transform([longitude, latitude], dataProjection, viewProjection))
+            });
 
-            if ((item.minZoom === undefined || currentZoom >= item.minZoom) &&
-                (item.maxZoom === undefined || currentZoom <= item.maxZoom)) {
+            var style = new ol.style.Style();
+            if (item.image)
+                style.setImage(new ol.style.Icon({
+                    src: item.image,
+                    anchor: item.imageAnchor,
+                    scale: item.imageScale
+                }));
 
-                var longitude = item.x;
-                var latitude = item.z;
-
-                var feature = new ol.Feature({
-                    geometry: new ol.geom.Point(ol.proj.transform([longitude, latitude], dataProjection, viewProjection)),
-                    markerData: item // markerData 속성 설정
-                });
-
-                var style = new ol.style.Style();
-                if (item.image)
-                    style.setImage(new ol.style.Icon({
-                        src: item.image,
-                        anchor: item.imageAnchor,
-                        scale: item.imageScale
-                    }));
-
-                if (item.text) {
-                    style.setText(new ol.style.Text({
-                        text: item.text,
-                        font: item.font,
-                        offsetX: item.offsetX,
-                        offsetY: item.offsetY,
-                        info: item.info,
-                        fill: item.textColor ? new ol.style.Fill({
-                            color: item.textColor
-                        }) : null,
-                        padding: item.textPadding ?? [2, 4, 2, 4],
-                        stroke: item.textStrokeColor ? new ol.style.Stroke({
-                            color: item.textStrokeColor,
-                            width: item.textStrokeWidth
-                        }) : null,
-                        backgroundFill: item.textBackgroundColor ? new ol.style.Fill({
-                            color: item.textBackgroundColor
-                        }) : null,
-                        backgroundStroke: item.textBackgroundStrokeColor ? new ol.style.Stroke({
-                            color: item.textBackgroundStrokeColor,
-                            width: item.textBackgroundStrokeWidth
-                        }) : null,
-                    }));
-                }
-
-                feature.setStyle(style);
-
-                features.push(feature);
+            if (item.text) {                               
+                style.setText(new ol.style.Text({
+                    text: item.text,
+                    font: item.font,
+                    offsetX: item.offsetX,
+                    offsetY: item.offsetY,
+                    fill: item.textColor ? new ol.style.Fill({
+                        color: item.textColor
+                    }) : null,
+                    padding: item.textPadding ?? [2, 4, 2, 4],
+                    stroke: item.textStrokeColor ? new ol.style.Stroke({
+                        color: item.textStrokeColor,
+                        width: item.textStrokeWidth
+                    }) : null,
+                    backgroundFill: item.textBackgroundColor ? new ol.style.Fill({
+                        color: item.textBackgroundColor
+                    }) : null,
+                    backgroundStroke: item.textBackgroundStrokeColor ? new ol.style.Stroke({
+                        color: item.textBackgroundStrokeColor,
+                        width: item.textBackgroundStrokeWidth
+                    }) : null,
+                }));
             }
+
+            feature.setStyle(style);
+
+            features.push(feature);
         }
 
         var vectorSource = new ol.source.Vector({
@@ -289,22 +230,22 @@ class Unmined {
         });
         return vectorLayer;
     }
-
+    
     defaultPlayerMarkerStyle = {
-        image: "playerimages/default.png",
-        imageAnchor: [0.5, 0.5],
-        imageScale: 0.25,
+            image: "playerimages/default.png",
+            imageAnchor: [0.5, 0.5],
+            imageScale: 0.25,
 
-        textColor: "white",
-        offsetX: 0,
-        offsetY: 20,
-        font: "14px Arial",
-        //textStrokeColor: "black",
-        //textStrokeWidth: 2,
-        textBackgroundColor: "#00000088",
-        //textBackgroundStrokeColor: "black",
-        //textBackgroundStrokeWidth: 1,
-        textPadding: [2, 4, 2, 4],
+            textColor: "white",
+            offsetX: 0,
+            offsetY: 20,
+            font: "14px Arial",
+            //textStrokeColor: "black",
+            //textStrokeWidth: 2,
+            textBackgroundColor: "#00000088",
+            //textBackgroundStrokeColor: "black",
+            //textBackgroundStrokeWidth: 1,
+            textPadding: [2, 4, 2, 4],
     }
 
     playerToMarker(player) {
