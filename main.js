@@ -186,7 +186,7 @@ function handleReviewSubmit(e) {
         comment: comment
     };
 
-    fetch('https://api.mintsclover.com/reviews', {
+    fetch('https://api.zerossin.com/reviews', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -292,7 +292,7 @@ function showDetailWindow(marker) {
     reviewsList.innerHTML = '';
 
     // 별점 및 리뷰 수 가져오기
-    fetch(`https://api.mintsclover.com/reviews?placeId=${encodeURIComponent(marker.text)}`)
+    fetch(`https://api.zerossin.com/reviews?placeId=${encodeURIComponent(marker.text)}`)
         .then(function (response) {
             return response.json();
         })
@@ -329,7 +329,7 @@ detailWindow.addEventListener('transitionend', function () {
         };
 
         // Flask API에 POST 요청 보내기
-        fetch('https://test.kevalsil.com/map_data', {
+        fetch('https://guminai.zerossin.com/map_data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -347,7 +347,7 @@ detailWindow.addEventListener('transitionend', function () {
         });
 
         // 리뷰 목록 가져오기
-        fetch(`https://api.mintsclover.com/reviews?placeId=${encodeURIComponent(currentMarker.text)}`)
+        fetch(`https://api.zerossin.com/reviews?placeId=${encodeURIComponent(currentMarker.text)}`)
             .then(function (response) {
                 return response.json();
             })
