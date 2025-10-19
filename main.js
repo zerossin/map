@@ -255,6 +255,26 @@ function updateSearchResults(query) {
         return;
     }
 
+    // 검색 결과 정렬: 1) 정확히 일치, 2) 시작하는 것, 3) 포함하는 것
+    matchedMarkers.sort(function(a, b) {
+        var aText = a.text.toLowerCase();
+        var bText = b.text.toLowerCase();
+        
+        // 정확히 일치하는 경우 최우선
+        if (aText === query && bText !== query) return -1;
+        if (aText !== query && bText === query) return 1;
+        
+        // 검색어로 시작하는 경우 우선
+        var aStarts = aText.startsWith(query);
+        var bStarts = bText.startsWith(query);
+        
+        if (aStarts && !bStarts) return -1;
+        if (!aStarts && bStarts) return 1;
+        
+        // 둘 다 시작하거나 둘 다 포함하는 경우 가나다순
+        return aText.localeCompare(bText, 'ko');
+    });
+
     matchedMarkers.forEach(function (marker) {
         var resultItem = document.createElement('div');
         resultItem.className = 'result-item';
