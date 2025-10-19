@@ -740,7 +740,8 @@ detailWindow.addEventListener('touchend', function(e) {
 function closeDetailWindow() {
     var isMobile = window.innerWidth <= 768;
     
-    detailWindow.classList.remove('expanded', 'small');
+    // transition 설정
+    detailWindow.style.transition = 'transform 0.25s ease-out';
     
     if (isMobile) {
         // 모바일: 아래로
@@ -757,8 +758,10 @@ function closeDetailWindow() {
     }
     
     setTimeout(function() {
+        detailWindow.classList.remove('expanded', 'small');
         detailWindow.style.display = 'none';
-    }, 200);
+        detailWindow.style.height = ''; // 완전히 사라진 후 정리
+    }, 250);
 }
 
 // 닫기 버튼 이벤트 처리
