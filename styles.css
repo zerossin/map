@@ -237,16 +237,34 @@ div.ol-mouse-position {
     transform: translateY(0);
 }
 
-/* 확장 중 (small + expanded 동시 존재) - 높이는 커지고 레이아웃은 확장 상태 */
+/* 축소 중 (small + expanded 동시 존재) - 크기는 작아지지만 레이아웃은 확장 상태 유지 */
 #detail-window.small.expanded {
-    height: 100%;
-    overflow: scroll;
+    height: 150px;
+    overflow: hidden;
+}
+
+/* 축소 중에도 레이아웃은 column 유지 */
+#detail-window.small.expanded .detail-content {
+    flex-direction: column;
+}
+
+/* 축소 중 이미지는 확장 상태 유지하다가 작아짐 */
+#detail-window.small.expanded .detail-image img {
+    width: 100%;
+    height: auto;
+    margin-left: 0;
+    border-radius: 0;
 }
 
 /* 상세 내용 */
 .detail-content {
     display: flex;
     padding: 15px;
+}
+
+.detail-image {
+    display: flex;
+    justify-content: flex-end;
 }
 
 .detail-text {
@@ -339,6 +357,10 @@ div.ol-mouse-position {
 
 #detail-window.expanded .detail-content {
     flex-direction: column;
+}
+
+#detail-window.expanded .detail-image {
+    align-items: flex-start;
 }
 
 #detail-window.expanded .detail-image img {
