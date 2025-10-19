@@ -63,16 +63,121 @@ document.getElementById('title').addEventListener('click', function () {
 });
 
 // 검색
+var lastSearchQuery = '';
+var searchTimer = null;
+var maxSearchHistory = 10; // 최대 저장 개수
+
+// localStorage에서 검색 기록 가져오기
+function getSearchHistory() {
+    var history = localStorage.getItem('searchHistory');
+    return history ? JSON.parse(history) : [];
+}
+
+// localStorage에 검색 기록 저장
+function saveSearchHistory(query) {
+    if (!query || query.trim() === '') return;
+    
+    var history = getSearchHistory();
+    
+    // 중복 제거
+    history = history.filter(function(item) {
+        return item !== query;
+    });
+    
+    // 최신 검색어를 맨 앞에 추가
+    history.unshift(query);
+    
+    // 최대 개수 제한
+    if (history.length > maxSearchHistory) {
+        history = history.slice(0, maxSearchHistory);
+    }
+    
+    localStorage.setItem('searchHistory', JSON.stringify(history));
+}
+
+// 검색 기록 표시
+function showSearchHistory() {
+    var resultsContainer = document.getElementById('search-results');
+    var history = getSearchHistory();
+    
+    resultsContainer.innerHTML = '';
+    
+    if (history.length === 0) {
+        resultsContainer.style.display = 'none';
+        return;
+    }
+    
+    history.forEach(function(query) {
+        var resultItem = document.createElement('div');
+        resultItem.className = 'result-item';
+        resultItem.innerHTML = `<div class="result-title">🕐 ${query}</div>`;
+        resultItem.addEventListener('click', function() {
+            // 해당 마커 찾기
+            var marker = UnminedCustomMarkers.markers.find(function(m) {
+                return m.text === query;
+            });
+            
+            if (marker) {
+                // 마커 찾으면 바로 이동
+                focusOnMarker(marker);
+                showDetailWindow(marker);
+                resultsContainer.style.display = 'none';
+                document.getElementById('search-window').value = '';
+            } else {
+                // 마커 없으면 검색만 실행
+                document.getElementById('search-window').value = query;
+                performSearch(query);
+            }
+        });
+        resultsContainer.appendChild(resultItem);
+    });
+    
+    resultsContainer.style.display = 'block';
+}
+
+function performSearch(value) {
+    var query = value.toLowerCase();
+    
+    // 조합 중인 자음/모음 제거 (단독으로 끝나는 경우만)
+    var cleanQuery = query.replace(/[ㄱ-ㅎㅏ-ㅣ]+$/, '');
+    
+    // 쿼리가 변경되었을 때만 검색
+    if (cleanQuery !== lastSearchQuery) {
+        lastSearchQuery = cleanQuery;
+        updateSearchResults(cleanQuery);
+        console.log('검색어:', cleanQuery);
+    }
+}
+
+// 검색창 포커스 시 검색 기록 표시
+document.getElementById('search-window').addEventListener('focus', function(e) {
+    if (e.target.value.trim() === '') {
+        showSearchHistory();
+    }
+});
+
 document.getElementById('search-window').addEventListener('input', function (e) {
-    var query = e.target.value.toLowerCase();
-    updateSearchResults(query);
-    console.log('검색어:', query);
+    // 타이머 제거 (debounce)
+    if (searchTimer) {
+        clearTimeout(searchTimer);
+    }
+    
+    // 즉시 검색 실행
+    performSearch(e.target.value);
 });
 
 // 검색창에서 엔터키 입력 시 처리
 document.getElementById('search-window').addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         var query = e.target.value.trim();
+        var resultsContainer = document.getElementById('search-results');
+        
+        // 검색 결과가 있으면 첫 번째 항목 선택
+        var firstResult = resultsContainer.querySelector('.result-item');
+        if (firstResult && resultsContainer.style.display !== 'none') {
+            firstResult.click();
+            return;
+        }
         
         // 좌표 형식인지 확인 (예: "242, -180" 또는 "242,-180" 또는 "242 -180")
         var coordPattern = /^(-?\d+)[,\s]+(-?\d+)$/;
@@ -81,6 +186,12 @@ document.getElementById('search-window').addEventListener('keypress', function (
         if (match) {
             var x = parseInt(match[1]);
             var z = parseInt(match[2]);
+            
+            // 세부 창이 열려있으면 닫기
+            var detailWindow = document.getElementById('detail-window');
+            if (detailWindow.style.display === 'block') {
+                closeDetailWindow();
+            }
             
             // 좌표로 이동
             var view = unmined.openlayersMap.getView();
@@ -91,7 +202,8 @@ document.getElementById('search-window').addEventListener('keypress', function (
             });
             
             // 검색창 초기화 및 결과 숨기기
-            document.getElementById('search-results').style.display = 'none';
+            e.target.value = ''; // 검색창 비우기
+            resultsContainer.style.display = 'none';
             e.target.blur(); // 키보드 숨기기
             
             // 좌표 표시 강조
@@ -123,6 +235,9 @@ function updateSearchResults(query) {
         resultItem.className = 'result-item';
         resultItem.innerHTML = `<div class="result-title">${marker.text}</div>`;
         resultItem.addEventListener('click', function () {
+            // 검색 기록에 저장
+            saveSearchHistory(marker.text);
+            
             focusOnMarker(marker);
             showDetailWindow(marker);
             resultsContainer.style.display = 'none'; // 결과 목록 숨기기
@@ -532,8 +647,20 @@ detailCloseButton.addEventListener('click', function (e) {
 
 // 지도 클릭 시 세부 창 닫기
 unmined.openlayersMap.on('click', function(evt) {
+    // 검색 결과 닫기
+    var resultsContainer = document.getElementById('search-results');
+    if (resultsContainer.style.display !== 'none') {
+        resultsContainer.style.display = 'none';
+    }
+    
+    // 모바일 환경에서 더 큰 히트 허용 오차 적용
+    var isMobile = window.innerWidth <= 768;
+    var hitTolerance = isMobile ? 15 : 5; // 모바일: 15px, PC: 5px
+    
     var feature = unmined.openlayersMap.forEachFeatureAtPixel(evt.pixel, function(feature) {
         return feature;
+    }, {
+        hitTolerance: hitTolerance
     });
     
     // 마커를 클릭하지 않았고 세부 창이 열려있으면 닫기
