@@ -481,8 +481,17 @@ detailWindow.addEventListener('touchend', function(e) {
 
 // 세부 창 닫기 함수
 function closeDetailWindow() {
+    var isMobile = window.innerWidth <= 768;
+    
     detailWindow.classList.remove('expanded', 'small');
-    detailWindow.style.transform = 'translateY(100%)';
+    
+    if (isMobile) {
+        // 모바일: 아래로
+        detailWindow.style.transform = 'translateY(100%)';
+    } else {
+        // PC: 오른쪽으로
+        detailWindow.style.transform = 'translateX(100%)';
+    }
     
     // 포커스 마커 제거
     if (focusMarkerLayer) {
@@ -555,7 +564,14 @@ function showDetailWindow(marker) {
 
     // 이미 열려있는 창이 있으면 먼저 닫기
     if (detailWindow.style.display === 'block') {
-        detailWindow.style.transform = 'translateY(100%)';
+        var isMobile = window.innerWidth <= 768;
+        
+        if (isMobile) {
+            detailWindow.style.transform = 'translateY(100%)';
+        } else {
+            detailWindow.style.transform = 'translateX(100%)';
+        }
+        
         setTimeout(function() {
             openDetailWindow(marker);
         }, 200);
@@ -565,9 +581,16 @@ function showDetailWindow(marker) {
 }
 
 function openDetailWindow(marker) {
-    // 창을 작은 상태로 초기화
-    detailWindow.classList.remove('expanded');
-    detailWindow.classList.add('small');
+    // PC에서는 항상 확장된 상태로, 모바일에서는 작은 상태로 시작
+    var isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+        detailWindow.classList.remove('expanded');
+        detailWindow.classList.add('small');
+    } else {
+        detailWindow.classList.remove('small');
+        detailWindow.classList.add('expanded');
+    }
 
     // 기본 정보 채우기
     titleElement.textContent = marker.text;
@@ -626,13 +649,22 @@ function openDetailWindow(marker) {
         });
 
     // 세부 창 표시 (애니메이션 적용)
+    var isMobile = window.innerWidth <= 768;
     detailWindow.style.display = 'block';
-    detailWindow.style.transform = 'translateY(100%)';
     
-    // 강제 리플로우를 위해 setTimeout 사용
-    setTimeout(function() {
-        detailWindow.style.transform = 'translateY(0)';
-    }, 10);
+    if (isMobile) {
+        // 모바일: 아래에서 위로
+        detailWindow.style.transform = 'translateY(100%)';
+        setTimeout(function() {
+            detailWindow.style.transform = 'translateY(0)';
+        }, 10);
+    } else {
+        // PC: 오른쪽에서 왼쪽으로
+        detailWindow.style.transform = 'translateX(100%)';
+        setTimeout(function() {
+            detailWindow.style.transform = 'translateX(0)';
+        }, 10);
+    }
 
     // 리뷰 폼 이벤트 리스너 추가
     var reviewForm = document.getElementById('review-form');

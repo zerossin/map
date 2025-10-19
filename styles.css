@@ -464,13 +464,19 @@ div.ol-mouse-position {
         left: auto;
         border-radius: 0;
         box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-        transform: translateY(0);
+        transform: translateX(100%);
+        transition: transform 0.3s ease-out;
     }
 
     /* 작은 창 상태 */
     #detail-window.small {
         height: auto;
-        transform: translateY(0);
+        transform: translateX(0);
+    }
+
+    /* 확장된 창 상태 */
+    #detail-window.expanded {
+        transform: translateX(0);
     }
 
     /* 닫기 버튼 항상 표시 */
