@@ -791,6 +791,7 @@ unmined.openlayersMap.on('click', function(evt) {
     // 마커를 클릭하지 않았고 세부 창이 열려있으면 닫기
     if (!feature && detailWindow.style.display === 'block') {
         closeDetailWindow();
+        return; // 창만 닫고 이동하지 않음
     }
     
     // 마커가 아닌 곳을 클릭하면 해당 위치로 시점 이동
