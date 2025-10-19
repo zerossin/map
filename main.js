@@ -11,6 +11,34 @@ if (UnminedPlayers && UnminedPlayers.length > 0) {
 
 unmined.map('map', UnminedMapProperties, UnminedRegions);
 
+// 중앙 좌표 표시 업데이트 함수
+function updateCenterCoordinates() {
+    var view = unmined.openlayersMap.getView();
+    var center = view.getCenter();
+    
+    if (center) {
+        var x = Math.round(center[0]);
+        var z = Math.round(-center[1]);
+        
+        var coordElement = document.querySelector('.custom-mouse-position');
+        if (!coordElement) {
+            coordElement = document.querySelector('.ol-mouse-position');
+        }
+        
+        if (coordElement) {
+            coordElement.textContent = `${x}, ${z}`;
+        }
+    }
+}
+
+// 지도 이동 및 줌 이벤트에 좌표 업데이트
+unmined.openlayersMap.on('moveend', updateCenterCoordinates);
+unmined.openlayersMap.on('pointerdrag', updateCenterCoordinates);
+unmined.openlayersMap.getView().on('change:center', updateCenterCoordinates);
+
+// 초기 좌표 표시
+setTimeout(updateCenterCoordinates, 100);
+
 // 현재 포커스 마커 레이어를 저장할 변수 선언
 var focusMarkerLayer = null;
 
@@ -102,6 +130,9 @@ function focusOnMarker(marker) {
         center: adjustedCoordinate,
         duration: 300
     });
+    
+    // 좌표 표시 강조
+    highlightCoordinateDisplay();
 
     // 이전에 추가된 포커스 마커 레이어가 있다면 제거
     if (focusMarkerLayer) {
@@ -449,7 +480,43 @@ unmined.openlayersMap.on('click', function(evt) {
     if (!feature && detailWindow.style.display === 'block') {
         closeDetailWindow();
     }
+    
+    // 마커가 아닌 곳을 클릭하면 해당 위치로 시점 이동
+    if (!feature) {
+        var coordinate = evt.coordinate;
+        var view = unmined.openlayersMap.getView();
+        
+        // 시점 이동
+        view.animate({
+            center: coordinate,
+            duration: 300
+        });
+        
+        // 좌표 표시 강조
+        highlightCoordinateDisplay();
+    }
 });
+
+// 좌표 표시 강조 함수
+function highlightCoordinateDisplay() {
+    var coordElement = document.querySelector('.custom-mouse-position');
+    if (!coordElement) {
+        coordElement = document.querySelector('.ol-mouse-position');
+    }
+    
+    if (coordElement) {
+        // 강조 표시
+        coordElement.style.backgroundColor = '#3CB371';
+        coordElement.style.color = 'white';
+        coordElement.style.transition = 'all 0.3s';
+        
+        // 1초 후 원래대로
+        setTimeout(function() {
+            coordElement.style.backgroundColor = 'white';
+            coordElement.style.color = 'black';
+        }, 1000);
+    }
+}
 
 // 세부 창 표시 함수
 function showDetailWindow(marker) {

@@ -122,9 +122,21 @@ header #search-window {
 
 div.ol-mouse-position {
     background-color: white;
-    padding: 6px;
+    padding: 6px 10px;
     border-radius: 3px;
     box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+}
+
+.custom-mouse-position {
+    background-color: white;
+    padding: 6px 10px;
+    border-radius: 3px;
+    box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
 }
 
 /* 검색창과 검색 결과 컨테이너를 감싸는 래퍼 */

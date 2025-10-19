@@ -125,9 +125,14 @@ class Unmined {
                 })
             });
 
+        // 기존 마우스 위치 컨트롤 제거하고 중앙 좌표 표시용으로 변경
         var mousePositionControl = new ol.control.MousePosition({
-            coordinateFormat: ol.coordinate.createStringXY(0),
-            projection: dataProjection
+            coordinateFormat: function(coord) {
+                return ''; // 빈 문자열 반환 (직접 업데이트할 것)
+            },
+            projection: dataProjection,
+            className: 'custom-mouse-position',
+            undefinedHTML: ''
         });
 
         var map = new ol.Map({
