@@ -132,8 +132,25 @@ function showSearchHistory() {
         resultsContainer.appendChild(resultItem);
     });
     
+    // 검색 기록 삭제 버튼 추가
+    var clearItem = document.createElement('div');
+    clearItem.className = 'result-item clear-history-item';
+    clearItem.innerHTML = `<div class="result-title" style="color: #FF5D5D; text-align: center;">검색 기록 지우기</div>`;
+    clearItem.addEventListener('click', function() {
+        if (confirm('검색 기록을 모두 삭제하시겠습니까?')) {
+            localStorage.removeItem('searchHistory');
+            resultsContainer.style.display = 'none';
+            document.getElementById('search-window').value = '';
+            console.log('검색 기록이 삭제되었습니다.');
+        }
+    });
+    resultsContainer.appendChild(clearItem);
+    
     resultsContainer.style.display = 'block';
 }
+
+// 검색 기록 삭제 (이전 버전 제거)
+// document.getElementById('clear-history') 코드 삭제됨
 
 function performSearch(value) {
     var query = value.toLowerCase();
@@ -151,6 +168,14 @@ function performSearch(value) {
 
 // 검색창 포커스 시 검색 기록 표시
 document.getElementById('search-window').addEventListener('focus', function(e) {
+    // 검색창이 비어있으면 항상 검색 기록 표시
+    if (e.target.value.trim() === '') {
+        showSearchHistory();
+    }
+});
+
+// 검색창 클릭 시에도 검색 기록 표시
+document.getElementById('search-window').addEventListener('click', function(e) {
     if (e.target.value.trim() === '') {
         showSearchHistory();
     }

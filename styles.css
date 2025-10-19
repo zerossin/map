@@ -176,6 +176,15 @@ div.ol-mouse-position {
     background-color: #f9f9f9;
 }
 
+.clear-history-item {
+    background-color: #fff8f8;
+    border-top: 2px solid #eee;
+}
+
+.clear-history-item:hover {
+    background-color: #ffe5e5;
+}
+
 .result-title {
     color: black;
     font-family: 'Noto Sans KR', sans-serif;
