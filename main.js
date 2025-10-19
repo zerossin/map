@@ -113,14 +113,6 @@ function focusOnMarker(marker) {
         geometry: new ol.geom.Point(coordinate)
     });
 
-    markerFeature.setStyle(new ol.style.Style({
-        image: new ol.style.Icon({
-            src: 'pinImages/custom.pin.png',
-            anchor: [0.5, 1],
-            scale: 0.4
-        })
-    }));
-
     var vectorSource = new ol.source.Vector({
         features: [markerFeature]
     });
@@ -130,6 +122,68 @@ function focusOnMarker(marker) {
     });
 
     unmined.openlayersMap.addLayer(focusMarkerLayer);
+    
+    // 애니메이션 효과 (scale 0에서 0.4로)
+    var startTime = Date.now();
+    var duration = 400; // 0.4초
+    var maxScale = 0.4;
+    
+    function animate() {
+        var elapsed = Date.now() - startTime;
+        var progress = Math.min(elapsed / duration, 1);
+        
+        // easeOutBack 효과 (살짝 오버슈팅)
+        var t = progress;
+        var overshoot = 1.2;
+        var easeProgress;
+        
+        if (t < 0.7) {
+            // 0 -> 1.15배로 빠르게 커짐
+            easeProgress = (t / 0.7) * overshoot;
+        } else {
+            // 1.15배 -> 1배로 살짝 줄어듦
+            easeProgress = overshoot - ((t - 0.7) / 0.3) * (overshoot - 1);
+        }
+        
+        var currentScale = maxScale * easeProgress;
+        var currentOpacity = Math.min(progress * 1.5, 1); // 빠르게 나타남
+        
+        markerFeature.setStyle(new ol.style.Style({
+            image: new ol.style.Icon({
+                src: 'pinImages/custom.pin.png',
+                anchor: [0.5, 1],
+                scale: currentScale,
+                opacity: currentOpacity
+            })
+        }));
+        
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        } else {
+            // 애니메이션 종료 후 최종 스타일 설정
+            markerFeature.setStyle(new ol.style.Style({
+                image: new ol.style.Icon({
+                    src: 'pinImages/custom.pin.png',
+                    anchor: [0.5, 1],
+                    scale: maxScale,
+                    opacity: 1
+                })
+            }));
+        }
+    }
+    
+    // 초기 스타일 (안 보이게)
+    markerFeature.setStyle(new ol.style.Style({
+        image: new ol.style.Icon({
+            src: 'pinImages/custom.pin.png',
+            anchor: [0.5, 1],
+            scale: 0,
+            opacity: 0
+        })
+    }));
+    
+    // 애니메이션 시작
+    requestAnimationFrame(animate);
 }
 
 window.focusOnMarker = focusOnMarker;
@@ -217,6 +271,13 @@ function handleReviewSubmit(e) {
 var detailWindow = document.getElementById('detail-window');
 var detailCloseButton = document.getElementById('detail-close-button');
 
+// 드래그 관련 변수
+var touchStartY = 0;
+var touchCurrentY = 0;
+var isDragging = false;
+var dragStartScrollTop = 0;
+var isScrollingContent = false;
+
 // 세부 창 내부 요소들
 var titleElement = document.getElementById('detail-title');
 var ratingElementStars = document.getElementById('detail-rating-stars');
@@ -226,30 +287,186 @@ var addressElement = document.getElementById('detail-address');
 var infoElement = document.getElementById('detail-info-text');
 var reviewsList = document.getElementById('detail-reviews');
 
-// 세부 창 클릭 시 확장
+// 세부 창 클릭 시 확장 (모바일에서는 드래그로만 제어)
 detailWindow.addEventListener('click', function (e) {
     if (e.target === detailCloseButton || e.target.closest('#review-form')) {
         return;
     }
 
-    if (detailWindow.classList.contains('small')) {
+    // 데스크톱에서만 클릭으로 확장
+    if (window.innerWidth > 768 && detailWindow.classList.contains('small') && !isDragging) {
         detailWindow.classList.remove('small');
         detailWindow.classList.add('expanded');
     }
 });
 
+// 터치 시작
+detailWindow.addEventListener('touchstart', function(e) {
+    if (e.target === detailCloseButton || e.target.closest('#review-form')) {
+        return;
+    }
+    
+    touchStartY = e.touches[0].clientY;
+    isDragging = false;
+    isScrollingContent = false;
+    
+    // 확장된 상태에서 스크롤 가능한 영역인지 확인
+    if (detailWindow.classList.contains('expanded')) {
+        dragStartScrollTop = detailWindow.scrollTop;
+        // 스크롤이 최상단이 아니면 스크롤 모드
+        if (dragStartScrollTop > 0) {
+            isScrollingContent = true;
+        }
+    }
+    
+    // transition 비활성화 (부드러운 드래그를 위해)
+    detailWindow.style.transition = 'none';
+});
+
+// 터치 이동
+detailWindow.addEventListener('touchmove', function(e) {
+    if (e.target === detailCloseButton || e.target.closest('#review-form')) {
+        return;
+    }
+    
+    touchCurrentY = e.touches[0].clientY;
+    var deltaY = touchCurrentY - touchStartY;
+    
+    // 확장된 상태에서 내용 스크롤 중이면 드래그 안함
+    if (detailWindow.classList.contains('expanded')) {
+        if (isScrollingContent) {
+            return;
+        }
+        // 아래로 당기려 하는데 스크롤이 최상단이 아니면 스크롤만
+        if (deltaY > 0 && detailWindow.scrollTop > 0) {
+            return;
+        }
+    }
+    
+    // 10px 이상 움직이면 드래그로 인식
+    if (Math.abs(deltaY) > 10) {
+        isDragging = true;
+        e.preventDefault(); // 맵 스크롤 방지
+        
+        // 실시간으로 창 위치 및 높이 조정
+        if (deltaY > 0) {
+            // 아래로 드래그
+            var translateY = Math.min(deltaY, window.innerHeight);
+            detailWindow.style.transform = `translateY(${translateY}px)`;
+        } else if (detailWindow.classList.contains('small')) {
+            // 작은 창에서 위로 드래그 - 높이도 함께 늘림
+            var absDeltaY = Math.abs(deltaY);
+            var newHeight = Math.min(150 + absDeltaY, window.innerHeight);
+            detailWindow.style.height = `${newHeight}px`;
+            detailWindow.style.transform = 'translateY(0)';
+        }
+    }
+});
+
+// 터치 종료
+detailWindow.addEventListener('touchend', function(e) {
+    if (e.target === detailCloseButton || e.target.closest('#review-form')) {
+        return;
+    }
+    
+    // transition 재활성화
+    detailWindow.style.transition = 'transform 0.2s ease-out, height 0.2s ease-out';
+    
+    if (!isDragging) {
+        return;
+    }
+    
+    var deltaY = touchCurrentY - touchStartY;
+    var threshold = 80; // 80px 이상 드래그 시 동작
+    var velocity = Math.abs(deltaY);
+    
+    if (detailWindow.classList.contains('small')) {
+        // 작은 창에서 위로 드래그 -> 확장
+        if (deltaY < -threshold || (deltaY < 0 && velocity > 150)) {
+            detailWindow.style.transform = 'translateY(0)';
+            detailWindow.style.height = ''; // height 초기화
+            detailWindow.classList.remove('small');
+            detailWindow.classList.add('expanded');
+        }
+        // 아래로 많이 드래그 -> 닫기
+        else if (deltaY > threshold || (deltaY > 0 && velocity > 150)) {
+            detailWindow.style.height = ''; // height 초기화
+            closeDetailWindow();
+        }
+        // 그 외 -> 원위치
+        else {
+            detailWindow.style.transform = 'translateY(0)';
+            detailWindow.style.height = ''; // height 초기화
+        }
+    } else if (detailWindow.classList.contains('expanded')) {
+        // 확장된 창에서 아래로 드래그 -> 축소
+        if (deltaY > threshold || (deltaY > 0 && velocity > 150)) {
+            detailWindow.style.transform = 'translateY(0)';
+            detailWindow.classList.remove('expanded');
+            detailWindow.classList.add('small');
+        }
+        // 그 외 -> 원위치
+        else {
+            detailWindow.style.transform = 'translateY(0)';
+        }
+    }
+    
+    isDragging = false;
+    isScrollingContent = false;
+    touchStartY = 0;
+    touchCurrentY = 0;
+});
+
+// 세부 창 닫기 함수
+function closeDetailWindow() {
+    detailWindow.classList.remove('expanded', 'small');
+    detailWindow.style.transform = 'translateY(100%)';
+    
+    // 포커스 마커 제거
+    if (focusMarkerLayer) {
+        unmined.openlayersMap.removeLayer(focusMarkerLayer);
+        focusMarkerLayer = null;
+    }
+    
+    setTimeout(function() {
+        detailWindow.style.display = 'none';
+    }, 200);
+}
+
 // 닫기 버튼 이벤트 처리
 detailCloseButton.addEventListener('click', function (e) {
     e.stopPropagation();
-    detailWindow.style.display = 'none';
-    detailWindow.classList.remove('expanded');
-    detailWindow.classList.add('small');
+    closeDetailWindow();
+});
+
+// 지도 클릭 시 세부 창 닫기
+unmined.openlayersMap.on('click', function(evt) {
+    var feature = unmined.openlayersMap.forEachFeatureAtPixel(evt.pixel, function(feature) {
+        return feature;
+    });
+    
+    // 마커를 클릭하지 않았고 세부 창이 열려있으면 닫기
+    if (!feature && detailWindow.style.display === 'block') {
+        closeDetailWindow();
+    }
 });
 
 // 세부 창 표시 함수
 function showDetailWindow(marker) {
     currentMarker = marker;
 
+    // 이미 열려있는 창이 있으면 먼저 닫기
+    if (detailWindow.style.display === 'block') {
+        detailWindow.style.transform = 'translateY(100%)';
+        setTimeout(function() {
+            openDetailWindow(marker);
+        }, 200);
+    } else {
+        openDetailWindow(marker);
+    }
+}
+
+function openDetailWindow(marker) {
     // 창을 작은 상태로 초기화
     detailWindow.classList.remove('expanded');
     detailWindow.classList.add('small');
@@ -310,8 +527,14 @@ function showDetailWindow(marker) {
             reviewCountElement.textContent = '0개';
         });
 
-    // 세부 창 표시
+    // 세부 창 표시 (애니메이션 적용)
     detailWindow.style.display = 'block';
+    detailWindow.style.transform = 'translateY(100%)';
+    
+    // 강제 리플로우를 위해 setTimeout 사용
+    setTimeout(function() {
+        detailWindow.style.transform = 'translateY(0)';
+    }, 10);
 
     // 리뷰 폼 이벤트 리스너 추가
     var reviewForm = document.getElementById('review-form');
