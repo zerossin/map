@@ -470,23 +470,30 @@ function handleReviewSubmit(e) {
         body: JSON.stringify(reviewData)
     })
         .then(function (response) {
-            if (response.ok) {
-                alert('리뷰가 등록되었습니다.');
-                // 리뷰 목록 갱신 - 확장 상태 유지
-                refreshDetailWindow(currentMarker);
+            // 응답 상태 확인
+            if (response.ok || response.status === 200 || response.status === 201) {
+                return response.json().catch(function() {
+                    // JSON 파싱 실패해도 성공으로 처리
+                    return { success: true };
+                });
             } else {
-                alert('리뷰 등록에 실패하였습니다.');
+                throw new Error('리뷰 등록 실패');
             }
+        })
+        .then(function (data) {
+            alert('리뷰가 등록되었습니다.');
+            // 폼 초기화
+            e.target.reset();
+            selectedRating = 0;
+            document.getElementById('selected-rating').textContent = '0점';
+            // 리뷰 목록 갱신 - 확장 상태 유지
+            var wasExpanded = detailWindow.classList.contains('expanded');
+            openDetailWindow(currentMarker, wasExpanded);
         })
         .catch(function (error) {
             console.error('Error:', error);
             alert('리뷰 등록 중 오류가 발생하였습니다.');
         });
-
-    // 폼 초기화
-    e.target.reset();
-    selectedRating = 0;
-    document.getElementById('selected-rating').textContent = '0점';
 }
 
 // 세부 창 요소 가져오기
@@ -763,19 +770,6 @@ function highlightCoordinateDisplay() {
     }
 }
 
-// 세부 창 내용 새로고침 (현재 상태 유지)
-function refreshDetailWindow(marker) {
-    var isExpanded = detailWindow.classList.contains('expanded');
-    
-    // openDetailWindow 호출하되 상태는 유지
-    openDetailWindow(marker);
-    
-    // 확장 상태였다면 확장 상태 복원
-    if (isExpanded) {
-        detailWindow.classList.add('expanded');
-    }
-}
-
 // 세부 창 표시 함수
 function showDetailWindow(marker) {
     currentMarker = marker;
@@ -798,11 +792,16 @@ function showDetailWindow(marker) {
     }
 }
 
-function openDetailWindow(marker) {
+function openDetailWindow(marker, keepExpanded) {
     // PC에서는 항상 확장된 상태로, 모바일에서는 작은 상태로 시작
+    // keepExpanded가 true면 현재 상태 유지
     var isMobile = window.innerWidth <= 768;
     
-    if (isMobile) {
+    if (keepExpanded) {
+        // 확장 상태 유지
+        detailWindow.classList.remove('small');
+        detailWindow.classList.add('expanded');
+    } else if (isMobile) {
         detailWindow.classList.remove('expanded');
         detailWindow.classList.add('small');
     } else {
@@ -930,6 +929,12 @@ detailWindow.addEventListener('transitionend', function () {
 
                 // 초기 5개만 표시
                 renderReviews(allReviews.slice(0, currentReviewCount));
+                
+                // 기존 더보기 버튼 제거
+                var existingBtn = document.getElementById('load-more-reviews');
+                if (existingBtn) {
+                    existingBtn.remove();
+                }
                 
                 // 더보기 버튼 추가 (리뷰가 5개 이상인 경우)
                 if (allReviews.length > currentReviewCount) {
