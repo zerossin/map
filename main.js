@@ -444,6 +444,50 @@ starInputs.forEach(function (input) {
     });
 });
 
+// 리뷰 삭제 함수
+function deleteReview(reviewId) {
+    var password = prompt('관리자 비밀번호를 입력하세요:');
+    
+    // 클라이언트 검증 제거
+    if (!password) {
+        return;
+    }
+    
+    // 바로 서버로 전송 (서버에서 검증)
+    fetch(`https://api.zerossin.com/reviews/${reviewId}`, {
+        method: 'DELETE',
+        headers: {
+            'X-Admin-Password': password  // 서버에서만 검증
+        }
+    })
+        .then(function (response) {
+            if (response.ok || response.status === 200 || response.status === 204) {
+                alert('리뷰가 삭제되었습니다.');
+                // 현재 확장 상태 유지하며 새로고침
+                var wasExpanded = detailWindow.classList.contains('expanded');
+                openDetailWindow(currentMarker, wasExpanded);
+                return;
+            } else {
+                // 에러 응답 처리 - JSON이 아닐 수 있음
+                return response.text().then(function(text) {
+                    try {
+                        var data = JSON.parse(text);
+                        throw new Error(data.message || '리뷰 삭제 실패');
+                    } catch (e) {
+                        throw new Error('리뷰 삭제 실패 (상태 코드: ' + response.status + ')');
+                    }
+                });
+            }
+        })
+        .catch(function (error) {
+            console.error('Error:', error);
+            alert('리뷰 삭제 중 오류가 발생하였습니다: ' + error.message);
+        });
+}
+
+// 전역으로 노출
+window.deleteReview = deleteReview;
+
 // 리뷰 폼 제출 이벤트 핸들러 정의
 function handleReviewSubmit(e) {
     e.preventDefault();
@@ -592,22 +636,24 @@ detailWindow.addEventListener('touchmove', function(e) {
         return;
     }
     
-    // 10px 이상 움직이면 드래그로 인식 (작은 창에서)
+    // 10px 이상 움직이면 드래그로 인식
     if (Math.abs(deltaY) > 10) {
         isDragging = true;
         e.preventDefault(); // 맵 스크롤 방지
         
-        // 실시간으로 창 위치 및 높이 조정
-        if (deltaY > 0) {
-            // 아래로 드래그
-            var translateY = Math.min(deltaY, window.innerHeight);
-            detailWindow.style.transform = `translateY(${translateY}px)`;
-        } else if (detailWindow.classList.contains('small')) {
-            // 작은 창에서 위로 드래그 - 높이도 함께 늘림
-            var absDeltaY = Math.abs(deltaY);
-            var newHeight = Math.min(150 + absDeltaY, window.innerHeight);
-            detailWindow.style.height = `${newHeight}px`;
-            detailWindow.style.transform = 'translateY(0)';
+        // 작은 창에서만 드래그 처리
+        if (detailWindow.classList.contains('small')) {
+            if (deltaY > 0) {
+                // 작은 창에서 아래로 드래그
+                var translateY = Math.min(deltaY, window.innerHeight);
+                detailWindow.style.transform = `translateY(${translateY}px)`;
+            } else {
+                // 작은 창에서 위로 드래그 - 높이도 함께 늘림
+                var absDeltaY = Math.abs(deltaY);
+                var newHeight = Math.min(150 + absDeltaY, window.innerHeight);
+                detailWindow.style.height = `${newHeight}px`;
+                detailWindow.style.transform = 'translateY(0)';
+            }
         }
     }
 });
@@ -642,9 +688,20 @@ detailWindow.addEventListener('touchend', function(e) {
         }
         // 아래로 많이 드래그 -> 닫기
         else if (deltaY > threshold || (deltaY > 0 && velocity > 150)) {
-            detailWindow.style.transition = 'transform 0.2s ease-out, height 0.2s ease-out';
-            detailWindow.style.height = ''; // height 초기화
-            closeDetailWindow();
+            detailWindow.style.transition = 'transform 0.25s ease-out';
+            detailWindow.style.transform = 'translateY(100%)';
+            
+            // 포커스 마커 제거
+            if (focusMarkerLayer) {
+                unmined.openlayersMap.removeLayer(focusMarkerLayer);
+                focusMarkerLayer = null;
+            }
+            
+            setTimeout(function() {
+                detailWindow.classList.remove('expanded', 'small');
+                detailWindow.style.display = 'none';
+                detailWindow.style.height = ''; // 완전히 사라진 후 height 초기화
+            }, 250);
         }
         // 그 외 -> 원위치
         else {
@@ -973,6 +1030,7 @@ detailWindow.addEventListener('transitionend', function () {
                         <span class="review-user">${review.username || '익명'}</span>
                         <span class="review-rating">${getStars(review.rating)}</span>
                         <span class="review-date">${new Date(review.created_at).toLocaleDateString()}</span>
+                        <button class="review-delete-btn" onclick="deleteReview(${review.id})">🗑️</button>
                     </div>
                     <div class="review-comment">${review.comment}</div>
                 `;

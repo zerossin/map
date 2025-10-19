@@ -404,13 +404,27 @@ div.ol-mouse-position {
 
 .review-rating {
     color: #FF5D5D;
-    margin-right: 10px;
+    margin-right: auto;
 }
 
 .review-date {
-    margin-left: auto;
     font-size: 12px;
     color: #999;
+    margin-right: 10px;
+}
+
+.review-delete-btn {
+    background: transparent;
+    border: none;
+    color: #FF5D5D;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 5px;
+    transition: opacity 0.2s;
+}
+
+.review-delete-btn:hover {
+    opacity: 0.7;
 }
 
 .review-comment {
@@ -457,13 +471,14 @@ div.ol-mouse-position {
 .star-rating-container {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .star-rating {
     display: flex;
     flex-direction: row-reverse;
     font-size: 24px;
+    line-height: 1;
 }
 
 .star-rating input {
@@ -474,6 +489,7 @@ div.ol-mouse-position {
     color: #ccc;
     cursor: pointer;
     margin: 0 2px;
+    line-height: 1;
 }
 
 .star-rating label:hover,
@@ -486,6 +502,9 @@ div.ol-mouse-position {
     margin-left: 10px;
     font-size: 16px;
     color: #FF5D5D;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
 }
 
 /* 데스크톱용 스타일 조정 */
@@ -522,7 +541,7 @@ div.ol-mouse-position {
 }
 
 .star-rating {
-    padding: 0 0 10px 0px;
+    padding: 0;
     direction: rtl;
     font-size: 2em;
     unicode-bidi: bidi-override;
