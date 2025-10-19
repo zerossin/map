@@ -372,11 +372,13 @@ detailWindow.addEventListener('touchstart', function(e) {
     isDragging = false;
     isScrollingContent = false;
     
-    // 확장된 상태에서 스크롤 가능한 영역인지 확인
+    // 확장된 상태에서는 기본적으로 스크롤 가능하도록 설정
     if (detailWindow.classList.contains('expanded')) {
         dragStartScrollTop = detailWindow.scrollTop;
-        // 스크롤이 최상단이 아니면 스크롤 모드
-        if (dragStartScrollTop > 0) {
+        var scrollableHeight = detailWindow.scrollHeight - detailWindow.clientHeight;
+        
+        // 스크롤 가능한 콘텐츠가 있으면 스크롤 모드로 시작
+        if (scrollableHeight > 0) {
             isScrollingContent = true;
         }
     }
@@ -394,18 +396,36 @@ detailWindow.addEventListener('touchmove', function(e) {
     touchCurrentY = e.touches[0].clientY;
     var deltaY = touchCurrentY - touchStartY;
     
-    // 확장된 상태에서 내용 스크롤 중이면 드래그 안함
+    // 확장된 상태에서 스크롤 처리
     if (detailWindow.classList.contains('expanded')) {
-        if (isScrollingContent) {
-            return;
+        var currentScrollTop = detailWindow.scrollTop;
+        var maxScroll = detailWindow.scrollHeight - detailWindow.clientHeight;
+        
+        // 위로 스크롤하는 경우 (deltaY < 0) - 항상 허용
+        if (deltaY < 0) {
+            if (currentScrollTop < maxScroll) {
+                // 스크롤 가능한 상태면 스크롤만 허용
+                return;
+            }
         }
-        // 아래로 당기려 하는데 스크롤이 최상단이 아니면 스크롤만
-        if (deltaY > 0 && detailWindow.scrollTop > 0) {
-            return;
+        // 아래로 스크롤하는 경우 (deltaY > 0)
+        else if (deltaY > 0) {
+            if (currentScrollTop > 0) {
+                // 스크롤이 최상단이 아니면 스크롤만 허용
+                return;
+            }
+            // 스크롤이 최상단이고, 아래로 많이 당기면 창 축소
+            if (Math.abs(deltaY) > 10) {
+                isDragging = true;
+                e.preventDefault();
+                var translateY = Math.min(deltaY, window.innerHeight);
+                detailWindow.style.transform = `translateY(${translateY}px)`;
+            }
         }
+        return;
     }
     
-    // 10px 이상 움직이면 드래그로 인식
+    // 10px 이상 움직이면 드래그로 인식 (작은 창에서)
     if (Math.abs(deltaY) > 10) {
         isDragging = true;
         e.preventDefault(); // 맵 스크롤 방지

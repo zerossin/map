@@ -1,8 +1,8 @@
 @font-face {
-    font-family: 'YClover-Bold';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_231029@1.1/YClover-Bold.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
+    font-family: 'NanumSquareNeo';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumSquareNeo/NanumSquareNeoTTF-eHv.woff2);
+    font-weight: 900;
+    font-display: swap;
 }
 
 html,
@@ -31,8 +31,9 @@ header div {
 
 header div div {
     padding-top: 7px;
-    font-family: 'YClover-Bold';
+    font-family: 'NanumSquareNeo';
     font-size: 1.5em;
+    font-weight: 900;
     color: #3CB371;
     text-align: center;
 }
