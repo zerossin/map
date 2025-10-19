@@ -237,9 +237,10 @@ div.ol-mouse-position {
     transform: translateY(0);
 }
 
-/* 축소 중 (small + expanded 동시 존재) - 크기는 작아지지만 레이아웃은 확장 상태 유지 */
+/* 확장 중 (small + expanded 동시 존재) - 높이는 커지고 레이아웃은 확장 상태 */
 #detail-window.small.expanded {
-    height: 150px;
+    height: 100%;
+    overflow: scroll;
 }
 
 /* 상세 내용 */

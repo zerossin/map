@@ -568,6 +568,10 @@ detailWindow.addEventListener('click', function (e) {
 
     // 클릭으로 확장 (드래그가 아닐 때만)
     if (detailWindow.classList.contains('small') && !isDragging) {
+        // 드래그와 동일한 방식으로 확장
+        detailWindow.style.transition = 'transform 0.3s ease-out, height 0.3s ease-out';
+        detailWindow.style.transform = 'translateY(0)';
+        detailWindow.style.height = ''; // height 초기화
         detailWindow.classList.remove('small');
         detailWindow.classList.add('expanded');
     }
@@ -712,16 +716,11 @@ detailWindow.addEventListener('touchend', function(e) {
     } else if (detailWindow.classList.contains('expanded')) {
         // 확장된 창에서 아래로 드래그 -> 축소
         if (deltaY > threshold || (deltaY > 0 && velocity > 150)) {
-            // 먼저 small 클래스 추가 (크기 변경 시작)
-            detailWindow.classList.add('small');
             detailWindow.style.transition = 'transform 0.25s ease-out, height 0.25s ease-out';
             detailWindow.style.transform = 'translateY(0)';
             detailWindow.scrollTop = 0; // 스크롤 위치 초기화
-            
-            // 크기 변경이 끝난 후 expanded 제거 (레이아웃 변경)
-            setTimeout(function() {
-                detailWindow.classList.remove('expanded');
-            }, 250);
+            detailWindow.classList.remove('expanded');
+            detailWindow.classList.add('small');
         }
         // 그 외 -> 원위치
         else {
