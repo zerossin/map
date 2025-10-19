@@ -237,6 +237,11 @@ div.ol-mouse-position {
     transform: translateY(0);
 }
 
+/* 축소 중 (small + expanded 동시 존재) - 크기는 작아지지만 레이아웃은 확장 상태 유지 */
+#detail-window.small.expanded {
+    height: 150px;
+}
+
 /* 상세 내용 */
 .detail-content {
     display: flex;
@@ -279,12 +284,15 @@ div.ol-mouse-position {
     object-fit: cover;
     border-radius: 10px;
     margin-left: 15px;
+    transition: width 0.25s ease, height 0.25s ease, margin 0.25s ease, border-radius 0.25s ease;
 }
 
 /* 확장된 창에서만 보이는 내용 */
 .detail-extra {
     display: none;
     padding: 0;
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }
 
 /* 구분선 스타일 */
@@ -325,6 +333,7 @@ div.ol-mouse-position {
 
 #detail-window.expanded .detail-extra {
     display: block;
+    opacity: 1;
 }
 
 #detail-window.expanded .detail-content {
@@ -335,7 +344,16 @@ div.ol-mouse-position {
     width: 100%;
     height: auto;
     margin: 0;
+    margin-left: 0;
     border-radius: 0;
+}
+
+/* 축소 중일 때 (small.expanded) 이미지가 작아지면서 margin도 서서히 적용 */
+#detail-window.small.expanded .detail-image img {
+    width: 80px;
+    height: 80px;
+    margin-left: 15px;
+    border-radius: 10px;
 }
 
 /* 닫기 버튼 */

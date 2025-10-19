@@ -611,10 +611,12 @@ detailWindow.addEventListener('touchend', function(e) {
         return;
     }
     
-    // transition 재활성화
-    detailWindow.style.transition = 'transform 0.2s ease-out, height 0.2s ease-out';
-    
     if (!isDragging) {
+        // 드래그 아닌 경우 transition 상태 유지
+        isDragging = false;
+        isScrollingContent = false;
+        touchStartY = 0;
+        touchCurrentY = 0;
         return;
     }
     
@@ -625,6 +627,7 @@ detailWindow.addEventListener('touchend', function(e) {
     if (detailWindow.classList.contains('small')) {
         // 작은 창에서 위로 드래그 -> 확장
         if (deltaY < -threshold || (deltaY < 0 && velocity > 150)) {
+            detailWindow.style.transition = 'transform 0.3s ease-out, height 0.3s ease-out';
             detailWindow.style.transform = 'translateY(0)';
             detailWindow.style.height = ''; // height 초기화
             detailWindow.classList.remove('small');
@@ -632,23 +635,33 @@ detailWindow.addEventListener('touchend', function(e) {
         }
         // 아래로 많이 드래그 -> 닫기
         else if (deltaY > threshold || (deltaY > 0 && velocity > 150)) {
+            detailWindow.style.transition = 'transform 0.2s ease-out, height 0.2s ease-out';
             detailWindow.style.height = ''; // height 초기화
             closeDetailWindow();
         }
         // 그 외 -> 원위치
         else {
+            detailWindow.style.transition = 'transform 0.2s ease-out, height 0.2s ease-out';
             detailWindow.style.transform = 'translateY(0)';
             detailWindow.style.height = ''; // height 초기화
         }
     } else if (detailWindow.classList.contains('expanded')) {
         // 확장된 창에서 아래로 드래그 -> 축소
         if (deltaY > threshold || (deltaY > 0 && velocity > 150)) {
-            detailWindow.style.transform = 'translateY(0)';
-            detailWindow.classList.remove('expanded');
+            // 먼저 small 클래스 추가 (크기 변경 시작)
             detailWindow.classList.add('small');
+            detailWindow.style.transition = 'transform 0.25s ease-out, height 0.25s ease-out';
+            detailWindow.style.transform = 'translateY(0)';
+            detailWindow.scrollTop = 0; // 스크롤 위치 초기화
+            
+            // 크기 변경이 끝난 후 expanded 제거 (레이아웃 변경)
+            setTimeout(function() {
+                detailWindow.classList.remove('expanded');
+            }, 250);
         }
         // 그 외 -> 원위치
         else {
+            detailWindow.style.transition = 'transform 0.2s ease-out';
             detailWindow.style.transform = 'translateY(0)';
         }
     }
