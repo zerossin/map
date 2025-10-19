@@ -56,33 +56,54 @@
         </div>
         <!-- 확장된 창에서만 보이는 내용 -->
         <div class="detail-extra">
-            <div class="detail-info">
-                <p id="detail-info-text"></p>
-            </div>
-            <h3>리뷰</h3>
-            <ul id="detail-reviews">
-                <!-- 리뷰 항목이 여기에 추가됩니다 -->
-            </ul>
-            <h3>리뷰 작성</h3>
-            <form id="review-form">
-                <div class="star-rating-container">
-                    <div class="star-rating">
-                        <input type="radio" id="star5" name="rating" value="5">
-                        <label for="star5">★</label>
-                        <input type="radio" id="star4" name="rating" value="4">
-                        <label for="star4">★</label>
-                        <input type="radio" id="star3" name="rating" value="3">
-                        <label for="star3">★</label>
-                        <input type="radio" id="star2" name="rating" value="2">
-                        <label for="star2">★</label>
-                        <input type="radio" id="star1" name="rating" value="1">
-                        <label for="star1">★</label>
-                    </div>
-                    <span id="selected-rating">0점</span>
+            <!-- 구분선 -->
+            <div class="section-divider"></div>
+            
+            <!-- 설명 섹션 -->
+            <div class="detail-section detail-info-section">
+                <h3>설명</h3>
+                <div class="detail-info">
+                    <p id="detail-info-text"></p>
                 </div>
-                <textarea name="comment" placeholder="리뷰를 작성해주세요." required></textarea>
-                <button type="submit">등록</button>
-            </form>
+            </div>
+            
+            <!-- 구분선 -->
+            <div class="section-divider"></div>
+            
+            <!-- 리뷰 섹션 -->
+            <div class="detail-section detail-review-section">
+                <h3>리뷰</h3>
+                <ul id="detail-reviews">
+                    <!-- 리뷰 항목이 여기에 추가됩니다 -->
+                </ul>
+            </div>
+            
+            <!-- 구분선 -->
+            <div class="section-divider"></div>
+            
+            <!-- 리뷰 작성 섹션 -->
+            <div class="detail-section detail-review-form-section">
+                <h3>리뷰 작성</h3>
+                <form id="review-form">
+                    <div class="star-rating-container">
+                        <div class="star-rating">
+                            <input type="radio" id="star5" name="rating" value="5">
+                            <label for="star5">★</label>
+                            <input type="radio" id="star4" name="rating" value="4">
+                            <label for="star4">★</label>
+                            <input type="radio" id="star3" name="rating" value="3">
+                            <label for="star3">★</label>
+                            <input type="radio" id="star2" name="rating" value="2">
+                            <label for="star2">★</label>
+                            <input type="radio" id="star1" name="rating" value="1">
+                            <label for="star1">★</label>
+                        </div>
+                        <span id="selected-rating">0점</span>
+                    </div>
+                    <textarea name="comment" placeholder="리뷰를 작성해주세요." required></textarea>
+                    <button type="submit">등록</button>
+                </form>
+            </div>
         </div>
         <button id="detail-close-button">×</button>
     </div>
