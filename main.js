@@ -472,8 +472,8 @@ function handleReviewSubmit(e) {
         .then(function (response) {
             if (response.ok) {
                 alert('리뷰가 등록되었습니다.');
-                // 리뷰 목록 갱신
-                showDetailWindow(currentMarker);
+                // 리뷰 목록 갱신 - 확장 상태 유지
+                refreshDetailWindow(currentMarker);
             } else {
                 alert('리뷰 등록에 실패하였습니다.');
             }
@@ -763,6 +763,19 @@ function highlightCoordinateDisplay() {
     }
 }
 
+// 세부 창 내용 새로고침 (현재 상태 유지)
+function refreshDetailWindow(marker) {
+    var isExpanded = detailWindow.classList.contains('expanded');
+    
+    // openDetailWindow 호출하되 상태는 유지
+    openDetailWindow(marker);
+    
+    // 확장 상태였다면 확장 상태 복원
+    if (isExpanded) {
+        detailWindow.classList.add('expanded');
+    }
+}
+
 // 세부 창 표시 함수
 function showDetailWindow(marker) {
     currentMarker = marker;
@@ -905,31 +918,62 @@ detailWindow.addEventListener('transitionend', function () {
         });
 
         // 리뷰 목록 가져오기
+        var currentReviewCount = 5; // 초기 표시 개수
+        var allReviews = []; // 전체 리뷰 저장
+        
         fetch(`https://api.zerossin.com/reviews?placeId=${encodeURIComponent(currentMarker.text)}`)
             .then(function (response) {
                 return response.json();
             })
             .then(function (data) {
-                var reviews = data.reviews;
+                allReviews = data.reviews;
 
-                reviewsList.innerHTML = '';
-                reviews.forEach(function (review) {
-                    var li = document.createElement('li');
-                    li.innerHTML = `
-                        <div class="review-header">
-                            <span class="review-user">${review.username || '익명'}</span>
-                            <span class="review-rating">${getStars(review.rating)}</span>
-                            <span class="review-date">${new Date(review.created_at).toLocaleDateString()}</span>
-                        </div>
-                        <div class="review-comment">${review.comment}</div>
-                    `;
-                    reviewsList.appendChild(li);
-                });
+                // 초기 5개만 표시
+                renderReviews(allReviews.slice(0, currentReviewCount));
+                
+                // 더보기 버튼 추가 (리뷰가 5개 이상인 경우)
+                if (allReviews.length > currentReviewCount) {
+                    var loadMoreBtn = document.createElement('button');
+                    loadMoreBtn.id = 'load-more-reviews';
+                    loadMoreBtn.textContent = `더보기 (${allReviews.length - currentReviewCount}개 남음)`;
+                    loadMoreBtn.style.cssText = 'width: 100%; padding: 12px; margin-top: 10px; background-color: #f5f5f5; color: #333; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;';
+                    
+                    loadMoreBtn.addEventListener('click', function() {
+                        currentReviewCount += 5;
+                        renderReviews(allReviews.slice(0, currentReviewCount));
+                        
+                        // 남은 리뷰가 있으면 버튼 업데이트, 없으면 제거
+                        if (currentReviewCount >= allReviews.length) {
+                            loadMoreBtn.remove();
+                        } else {
+                            loadMoreBtn.textContent = `더보기 (${allReviews.length - currentReviewCount}개 남음)`;
+                        }
+                    });
+                    
+                    reviewsList.parentElement.appendChild(loadMoreBtn);
+                }
             })
             .catch(function (error) {
                 console.error('Error:', error);
                 reviewsList.innerHTML = '<li>리뷰를 불러오는 중 오류가 발생하였습니다.</li>';
             });
+        
+        // 리뷰 렌더링 함수
+        function renderReviews(reviews) {
+            reviewsList.innerHTML = '';
+            reviews.forEach(function (review) {
+                var li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="review-header">
+                        <span class="review-user">${review.username || '익명'}</span>
+                        <span class="review-rating">${getStars(review.rating)}</span>
+                        <span class="review-date">${new Date(review.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <div class="review-comment">${review.comment}</div>
+                `;
+                reviewsList.appendChild(li);
+            });
+        }
     }
 });
 
