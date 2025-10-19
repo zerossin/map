@@ -69,6 +69,37 @@ document.getElementById('search-window').addEventListener('input', function (e) 
     console.log('검색어:', query);
 });
 
+// 검색창에서 엔터키 입력 시 처리
+document.getElementById('search-window').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        var query = e.target.value.trim();
+        
+        // 좌표 형식인지 확인 (예: "242, -180" 또는 "242,-180" 또는 "242 -180")
+        var coordPattern = /^(-?\d+)[,\s]+(-?\d+)$/;
+        var match = query.match(coordPattern);
+        
+        if (match) {
+            var x = parseInt(match[1]);
+            var z = parseInt(match[2]);
+            
+            // 좌표로 이동
+            var view = unmined.openlayersMap.getView();
+            view.animate({
+                center: [x, -z],
+                duration: 500,
+                zoom: Math.max(view.getZoom(), 1) // 최소 줌 레벨 1
+            });
+            
+            // 검색창 초기화 및 결과 숨기기
+            document.getElementById('search-results').style.display = 'none';
+            e.target.blur(); // 키보드 숨기기
+            
+            // 좌표 표시 강조
+            highlightCoordinateDisplay();
+        }
+    }
+});
+
 function updateSearchResults(query) {
     var resultsContainer = document.getElementById('search-results');
     resultsContainer.innerHTML = ''; // 기존 결과 초기화
@@ -318,14 +349,14 @@ var addressElement = document.getElementById('detail-address');
 var infoElement = document.getElementById('detail-info-text');
 var reviewsList = document.getElementById('detail-reviews');
 
-// 세부 창 클릭 시 확장 (모바일에서는 드래그로만 제어)
+// 세부 창 클릭 시 확장
 detailWindow.addEventListener('click', function (e) {
     if (e.target === detailCloseButton || e.target.closest('#review-form')) {
         return;
     }
 
-    // 데스크톱에서만 클릭으로 확장
-    if (window.innerWidth > 768 && detailWindow.classList.contains('small') && !isDragging) {
+    // 클릭으로 확장 (드래그가 아닐 때만)
+    if (detailWindow.classList.contains('small') && !isDragging) {
         detailWindow.classList.remove('small');
         detailWindow.classList.add('expanded');
     }
