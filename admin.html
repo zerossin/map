@@ -350,36 +350,25 @@
         
         // ===== 인증 관련 =====
         async function checkAuth() {
-            console.log('checkAuth 시작');
-            
             // 먼저 로그인 화면 표시 (기본)
             showLoginPage();
-            console.log('로그인 화면 표시됨');
             
             try {
                 // 서버에 세션 확인 요청
-                console.log('서버 세션 확인 요청 중...');
                 const response = await fetch('https://api.zerossin.com/suggestions', {
                     credentials: 'include'  // 쿠키 전송
                 });
                 
-                console.log('서버 응답 상태:', response.status);
-                
                 if (response.ok) {
                     // 인증 성공 - 관리자 페이지 표시
-                    console.log('인증 성공 - 관리자 페이지로 이동');
                     showAdminPage();
                 } else if (response.status === 403) {
                     // 인증 실패 - 로그인 화면 유지
-                    console.log('인증 실패 (403) - 로그인 화면 유지');
                     showLoginPage();
-                } else {
-                    console.log('기타 응답 (' + response.status + ') - 로그인 화면 유지');
                 }
                 // 다른 에러는 로그인 화면 유지 (이미 표시됨)
             } catch (error) {
                 console.error('Auth check error:', error);
-                console.log('에러 발생 - 로그인 화면 유지');
                 // CORS 에러 등 - 로그인 화면 유지 (이미 표시됨)
             }
         }
@@ -443,17 +432,13 @@
         }
         
         function showLoginPage() {
-            console.log('showLoginPage 호출됨');
             document.getElementById('loginContainer').style.display = 'flex';
             document.getElementById('adminContainer').style.display = 'none';
-            console.log('로그인 컨테이너: flex, 관리자 컨테이너: none');
         }
         
         function showAdminPage() {
-            console.log('showAdminPage 호출됨');
             document.getElementById('loginContainer').style.display = 'none';
             document.getElementById('adminContainer').style.display = 'block';
-            console.log('로그인 컨테이너: none, 관리자 컨테이너: block');
             loadSuggestions();
         }
         
@@ -617,12 +602,95 @@
             }
         }
         
-        // 리뷰 목록 로드 (기존 리뷰 API 사용)
+        // 리뷰 목록 로드
         async function loadReviews() {
-            const container = document.getElementById('reviewContainer');
-            container.innerHTML = '<div class="empty-message">리뷰 관리 기능은 준비 중입니다.</div>';
+            try {
+                const response = await fetch('https://api.zerossin.com/reviews', {
+                    credentials: 'include'
+                });
+                
+                if (response.status === 403) {
+                    alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+                    location.reload();
+                    return;
+                }
+                
+                const reviews = await response.json();
+                
+                const container = document.getElementById('reviewContainer');
+                container.innerHTML = '';
+                
+                if (!Array.isArray(reviews) || reviews.length === 0) {
+                    container.innerHTML = '<div class="empty-message">리뷰가 없습니다.</div>';
+                    return;
+                }
+                
+                // 최신순 정렬
+                reviews.sort((a, b) => new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt));
+                
+                reviews.forEach(review => {
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    
+                    // 올바른 필드명 사용
+                    const placeName = review.placeName || review.place_name || '알 수 없는 위치';
+                    const content = review.comment || '(내용 없음)';
+                    const rating = review.rating || 0;
+                    const stars = '⭐'.repeat(rating);
+                    const username = review.username || '익명';
+                    const createdAt = new Date(review.created_at || review.createdAt).toLocaleString('ko-KR');
+                    const ip = review.ip || 'N/A';
+                    const coords = review.coords;
+                    
+                    item.innerHTML = `
+                        <div class="suggestion-header">
+                            <div>
+                                <span class="type-badge type-add">${stars} ${escapeHtml(placeName)}</span>
+                            </div>
+                        </div>
+                        <div class="suggestion-content">
+                            <div class="suggestion-text">${escapeHtml(content)}</div>
+                        </div>
+                        <div class="suggestion-meta">
+                            <span>👤 ${escapeHtml(username)}</span>
+                            <span>📅 ${createdAt}</span>
+                            ${coords ? `<span>📍 (${coords[0].toFixed(4)}, ${coords[1].toFixed(4)})</span>` : ''}
+                            <span>🌐 ${ip}</span>
+                        </div>
+                        <div class="suggestion-actions">
+                            <button class="action-btn btn-delete" onclick="deleteReview(${review.id})">🗑️ 삭제</button>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                document.getElementById('reviewContainer').innerHTML = '<div class="empty-message">리뷰 목록을 불러오는 중 오류가 발생했습니다.</div>';
+            }
+        }
+        
+        // 리뷰 삭제
+        async function deleteReview(id) {
+            if (!confirm('이 리뷰를 삭제하시겠습니까?')) {
+                return;
+            }
             
-            // TODO: 리뷰 API로 구현
+            try {
+                const response = await fetch(`https://api.zerossin.com/reviews/${id}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    alert('삭제되었습니다.');
+                    loadReviews();
+                } else {
+                    alert('삭제 중 오류가 발생했습니다.');
+                }
+            } catch (error) {
+                console.error('Error deleting review:', error);
+                alert('삭제 중 오류가 발생했습니다.');
+            }
         }
         
         // ===== 유틸리티 =====

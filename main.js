@@ -345,9 +345,7 @@ document.getElementById('suggestBackButton').addEventListener('click', function(
 
 // 위치 선택 버튼
 document.getElementById('suggestSelectLocation').addEventListener('click', function() {
-    console.log('위치 선택 버튼 클릭됨');
     isSelectingLocation = true;
-    console.log('isSelectingLocation:', isSelectingLocation);
     
     // 모달만 닫기 (isSelectingLocation 초기화하지 않음)
     document.getElementById('suggestModal').style.display = 'none';
@@ -365,15 +363,11 @@ document.getElementById('suggestSelectLocation').addEventListener('click', funct
     
     // 위치 선택 오버레이 표시
     document.getElementById('locationSelectOverlay').style.display = 'flex';
-    
-    console.log('모든 창 닫힘, 맵 클릭 대기 중...');
 });
 
 // 맵 클릭으로 위치 선택 (기존 맵 클릭 이벤트에 추가 필요)
 function handleMapClickForSuggest(coords) {
-    console.log('handleMapClickForSuggest 호출됨, coords:', coords);
     if (isSelectingLocation) {
-        console.log('위치 선택 모드 활성화됨');
         suggestCoords = coords;
         isSelectingLocation = false;
         
@@ -383,24 +377,20 @@ function handleMapClickForSuggest(coords) {
         // 메뉴창 다시 열기
         var subMenu = document.getElementById('subMenu');
         var overlay = document.getElementById('overlay');
-        console.log('메뉴창 다시 열기 시작');
         subMenu.style.display = 'block';
         overlay.style.display = 'block';
         setTimeout(function() {
             subMenu.classList.add('show');
-            console.log('메뉴창 show 클래스 추가됨');
         }, 10);
         
         // 정보 제안 모달 다시 열기 (초기화하지 않고 그대로 복원)
         setTimeout(function() {
             var modal = document.getElementById('suggestModal');
             modal.style.display = 'flex';
-            console.log('모달 다시 열림');
             
             // 좌표 값 설정
             var coordText = '(' + coords[0].toFixed(0) + ', ' + coords[1].toFixed(0) + ')';
             document.getElementById('suggestCoords').value = coordText;
-            console.log('좌표 설정됨:', coordText);
         }, 250); // 메뉴 애니메이션 후
     }
 }
@@ -582,7 +572,6 @@ function showSearchHistory() {
             localStorage.removeItem('searchHistory');
             resultsContainer.style.display = 'none';
             document.getElementById('search-window').value = '';
-            console.log('검색 기록이 삭제되었습니다.');
         }
     });
     resultsContainer.appendChild(clearItem);
@@ -603,7 +592,6 @@ function performSearch(value) {
     if (cleanQuery !== lastSearchQuery) {
         lastSearchQuery = cleanQuery;
         updateSearchResults(cleanQuery);
-        console.log('검색어:', cleanQuery);
     }
 }
 
@@ -1226,11 +1214,8 @@ detailCloseButton.addEventListener('click', function (e) {
 
 // 지도 클릭 시 세부 창 닫기
 unmined.openlayersMap.on('click', function(evt) {
-    console.log('맵 클릭 이벤트 발생, isSelectingLocation:', isSelectingLocation);
-    
     // 위치 선택 모드인 경우
     if (isSelectingLocation) {
-        console.log('위치 선택 모드로 handleMapClickForSuggest 호출');
         handleMapClickForSuggest(evt.coordinate);
         return;
     }
@@ -1433,7 +1418,6 @@ detailWindow.addEventListener('transitionend', function () {
         .then(response => response.json())
         .then(data => {
             infoElement.textContent = currentMarker.info || data.message || '정보가 없습니다.';
-            console.log("응답 메시지:", data.message);
         })
         .catch(error => {
             infoElement.textContent = currentMarker.info || '정보가 없습니다.';
