@@ -162,7 +162,11 @@ class Unmined {
                 constrainResolution: true,
                 showFullExtent: true,
                 constrainOnlyCenter: true
-            })
+            }),
+            // iOS Safari 성능 최적화
+            pixelRatio: 1,
+            loadTilesWhileAnimating: true,
+            loadTilesWhileInteracting: true
         });
 
         if (options.markers) {

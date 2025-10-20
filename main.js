@@ -1059,7 +1059,7 @@ detailWindow.addEventListener('touchstart', function(e) {
     
     // transition 비활성화 (부드러운 드래그를 위해)
     detailWindow.style.transition = 'none';
-});
+}, { passive: true });
 
 // 터치 이동
 detailWindow.addEventListener('touchmove', function(e) {
@@ -1093,7 +1093,8 @@ detailWindow.addEventListener('touchmove', function(e) {
                 isDragging = true;
                 e.preventDefault();
                 var translateY = Math.min(deltaY, window.innerHeight);
-                detailWindow.style.transform = `translateY(${translateY}px)`;
+                detailWindow.style.transform = `translate3d(0, ${translateY}px, 0)`;
+                detailWindow.style.webkitTransform = `translate3d(0, ${translateY}px, 0)`;
             }
         }
         return;
@@ -1109,13 +1110,15 @@ detailWindow.addEventListener('touchmove', function(e) {
             if (deltaY > 0) {
                 // 작은 창에서 아래로 드래그
                 var translateY = Math.min(deltaY, window.innerHeight);
-                detailWindow.style.transform = `translateY(${translateY}px)`;
+                detailWindow.style.transform = `translate3d(0, ${translateY}px, 0)`;
+                detailWindow.style.webkitTransform = `translate3d(0, ${translateY}px, 0)`;
             } else {
                 // 작은 창에서 위로 드래그 - 높이도 함께 늘림
                 var absDeltaY = Math.abs(deltaY);
                 var newHeight = Math.min(150 + absDeltaY, window.innerHeight);
                 detailWindow.style.height = `${newHeight}px`;
-                detailWindow.style.transform = 'translateY(0)';
+                detailWindow.style.transform = 'translate3d(0, 0, 0)';
+                detailWindow.style.webkitTransform = 'translate3d(0, 0, 0)';
             }
         }
     }
@@ -1144,7 +1147,8 @@ detailWindow.addEventListener('touchend', function(e) {
         // 작은 창에서 위로 드래그 -> 확장
         if (deltaY < -threshold || (deltaY < 0 && velocity > 150)) {
             detailWindow.style.transition = 'transform 0.25s ease-out, height 0.25s ease-out';
-            detailWindow.style.transform = 'translateY(0)';
+            detailWindow.style.transform = 'translate3d(0, 0, 0)';
+            detailWindow.style.webkitTransform = 'translate3d(0, 0, 0)';
             detailWindow.style.height = ''; // height 초기화
             detailWindow.classList.remove('small');
             detailWindow.classList.add('expanded');
@@ -1152,7 +1156,8 @@ detailWindow.addEventListener('touchend', function(e) {
         // 아래로 많이 드래그 -> 닫기
         else if (deltaY > threshold || (deltaY > 0 && velocity > 150)) {
             detailWindow.style.transition = 'transform 0.25s ease-out';
-            detailWindow.style.transform = 'translateY(100%)';
+            detailWindow.style.transform = 'translate3d(0, 100%, 0)';
+            detailWindow.style.webkitTransform = 'translate3d(0, 100%, 0)';
             
             // 포커스 마커 제거
             if (focusMarkerLayer) {
@@ -1169,7 +1174,8 @@ detailWindow.addEventListener('touchend', function(e) {
         // 그 외 -> 원위치
         else {
             detailWindow.style.transition = 'transform 0.2s ease-out, height 0.2s ease-out';
-            detailWindow.style.transform = 'translateY(0)';
+            detailWindow.style.transform = 'translate3d(0, 0, 0)';
+            detailWindow.style.webkitTransform = 'translate3d(0, 0, 0)';
             detailWindow.style.height = ''; // height 초기화
         }
     } else if (detailWindow.classList.contains('expanded')) {
@@ -1178,7 +1184,8 @@ detailWindow.addEventListener('touchend', function(e) {
             // 먼저 small 클래스 추가 (크기 변경 시작)
             detailWindow.classList.add('small');
             detailWindow.style.transition = 'transform 0.25s ease-out, height 0.25s ease-out';
-            detailWindow.style.transform = 'translateY(0)';
+            detailWindow.style.transform = 'translate3d(0, 0, 0)';
+            detailWindow.style.webkitTransform = 'translate3d(0, 0, 0)';
             detailWindow.scrollTop = 0; // 스크롤 위치 초기화
             
             // 크기 변경이 끝난 후 expanded 제거 (레이아웃 변경)
@@ -1189,7 +1196,8 @@ detailWindow.addEventListener('touchend', function(e) {
         // 그 외 -> 원위치
         else {
             detailWindow.style.transition = 'transform 0.2s ease-out';
-            detailWindow.style.transform = 'translateY(0)';
+            detailWindow.style.transform = 'translate3d(0, 0, 0)';
+            detailWindow.style.webkitTransform = 'translate3d(0, 0, 0)';
         }
     }
     

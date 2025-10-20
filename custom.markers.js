@@ -2191,7 +2191,7 @@ UnminedCustomMarkers = {
         }),
         createMarker('district', {
             x: 2212,
-            z: 1068,
+            z: 1300,
             text: "호반정",
             minZoom: 4,
             maxZoom: 6,

@@ -805,6 +805,20 @@ header #search-window {
     height: calc(100% - 78px);
     width: 100%;
     image-rendering: pixelated;
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+}
+
+/* OpenLayers 맵 컨테이너 최적화 */
+#map .ol-viewport {
+    will-change: transform;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 캔버스 하드웨어 가속 */
+#map canvas {
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
 }
 
 .mouseposition {
@@ -916,22 +930,27 @@ div.ol-mouse-position {
     overflow: hidden;
     display: none;
     transition: transform 0.2s ease-out, height 0.2s ease-out;
-    transform: translateY(100%);
+    transform: translate3d(0, 100%, 0);
+    -webkit-transform: translate3d(0, 100%, 0);
     overscroll-behavior: contain;
     touch-action: pan-y;
+    will-change: transform;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* 작은 창 상태 */
 #detail-window.small {
     height: 150px; /* 작은 창의 높이 */
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
 }
 
 /* 확장된 창 상태 */
 #detail-window.expanded {
     height: 100%; /* 전체 높이로 확장 */
     overflow: scroll;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
 }
 
 /* 축소 중 (small + expanded 동시 존재) - 크기는 작아지지만 레이아웃은 확장 상태 유지 */
