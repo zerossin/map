@@ -1438,10 +1438,25 @@ detailWindow.addEventListener('transitionend', function () {
         })
         .then(response => response.json())
         .then(data => {
-            infoElement.textContent = currentMarker.info || data.message || '정보가 없습니다.';
+            var infoText = currentMarker.info || data.message || '정보가 없습니다.';
+            infoElement.textContent = infoText;
+            
+            // "정보가 없습니다" 일 때 스타일 적용
+            if (infoText === '정보가 없습니다.') {
+                infoElement.style.textAlign = 'center';
+                infoElement.style.color = '#999';
+                infoElement.style.padding = '20px';
+            } else {
+                infoElement.style.textAlign = '';
+                infoElement.style.color = '';
+                infoElement.style.padding = '';
+            }
         })
         .catch(error => {
             infoElement.textContent = currentMarker.info || '정보가 없습니다.';
+            infoElement.style.textAlign = 'center';
+            infoElement.style.color = '#999';
+            infoElement.style.padding = '20px';
             console.error("에러 발생:", error);
         });
 
@@ -1495,6 +1510,12 @@ detailWindow.addEventListener('transitionend', function () {
         // 리뷰 렌더링 함수
         function renderReviews(reviews) {
             reviewsList.innerHTML = '';
+            
+            if (reviews.length === 0) {
+                reviewsList.innerHTML = '<li style="text-align: center; color: #999; padding: 20px;">리뷰가 없습니다.</li>';
+                return;
+            }
+            
             reviews.forEach(function (review) {
                 var li = document.createElement('li');
                 li.innerHTML = `
