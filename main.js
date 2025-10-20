@@ -146,7 +146,7 @@ document.getElementById('menu-profile').addEventListener('click', function() {
 });
 
 document.getElementById('menu-notice').addEventListener('click', function() {
-    alert('공지사항 기능은 준비 중입니다.');
+    openNoticeModal();
 });
 
 document.getElementById('menu-suggest').addEventListener('click', function() {
@@ -269,6 +269,27 @@ document.getElementById('profileSaveButton').addEventListener('click', function(
 document.getElementById('profileModal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeProfileModal();
+    }
+});
+
+// ===== 공지사항 모달 관리 =====
+function openNoticeModal() {
+    document.getElementById('noticeModal').style.display = 'flex';
+}
+
+function closeNoticeModal() {
+    document.getElementById('noticeModal').style.display = 'none';
+}
+
+// 공지사항 모달 닫기 버튼
+document.getElementById('noticeModalClose').addEventListener('click', function() {
+    closeNoticeModal();
+});
+
+// 모달 외부 클릭 시 닫기
+document.getElementById('noticeModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeNoticeModal();
     }
 });
 
