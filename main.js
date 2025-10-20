@@ -150,7 +150,7 @@ document.getElementById('menu-notice').addEventListener('click', function() {
 });
 
 document.getElementById('menu-suggest').addEventListener('click', function() {
-    alert('정보 제안 기능은 준비 중입니다.');
+    openSuggestModal();
 });
 
 document.getElementById('menu-update').addEventListener('click', function() {
@@ -269,6 +269,206 @@ document.getElementById('profileSaveButton').addEventListener('click', function(
 document.getElementById('profileModal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeProfileModal();
+    }
+});
+
+// 정보 제안 모달 관리
+var currentSuggestType = '';
+var suggestCoords = null;
+var isSelectingLocation = false;
+
+// 정보 제안 모달 열기
+function openSuggestModal() {
+    var modal = document.getElementById('suggestModal');
+    var typeSection = document.getElementById('suggestTypeSection');
+    var formSection = document.getElementById('suggestFormSection');
+    
+    // 초기 상태로 리셋
+    typeSection.style.display = 'flex';
+    formSection.style.display = 'none';
+    currentSuggestType = '';
+    suggestCoords = null;
+    document.getElementById('suggestForm').reset();
+    
+    modal.style.display = 'flex';
+}
+
+// 정보 제안 모달 닫기
+function closeSuggestModal() {
+    document.getElementById('suggestModal').style.display = 'none';
+    isSelectingLocation = false;
+}
+
+// 정보 제안 타입 버튼 클릭
+document.querySelectorAll('.suggest-type-button').forEach(function(button) {
+    button.addEventListener('click', function() {
+        currentSuggestType = this.getAttribute('data-type');
+        showSuggestForm(currentSuggestType);
+    });
+});
+
+// 제안 폼 표시
+function showSuggestForm(type) {
+    var typeSection = document.getElementById('suggestTypeSection');
+    var formSection = document.getElementById('suggestFormSection');
+    var formTitle = document.getElementById('suggestFormTitle');
+    var locationGroup = document.getElementById('suggestLocationGroup');
+    
+    typeSection.style.display = 'none';
+    formSection.style.display = 'block';
+    
+    // 타입에 따라 폼 제목 및 필드 변경
+    if (type === 'add') {
+        formTitle.textContent = '추가할 장소 정보';
+        locationGroup.style.display = 'block';
+        document.getElementById('suggestTitle').placeholder = '장소 이름을 입력하세요';
+        document.getElementById('suggestContent').placeholder = '주소, 설명 등 상세 정보를 입력하세요';
+    } else if (type === 'edit') {
+        formTitle.textContent = '수정할 정보';
+        locationGroup.style.display = 'block';
+        document.getElementById('suggestTitle').placeholder = '수정할 장소 이름을 입력하세요';
+        document.getElementById('suggestContent').placeholder = '수정할 내용을 입력하세요';
+    } else if (type === 'feedback') {
+        formTitle.textContent = '건의사항';
+        locationGroup.style.display = 'none';
+        document.getElementById('suggestTitle').placeholder = '제목을 입력하세요';
+        document.getElementById('suggestContent').placeholder = '건의사항을 입력하세요';
+    }
+}
+
+// 뒤로 버튼
+document.getElementById('suggestBackButton').addEventListener('click', function() {
+    document.getElementById('suggestTypeSection').style.display = 'flex';
+    document.getElementById('suggestFormSection').style.display = 'none';
+    currentSuggestType = '';
+});
+
+// 위치 선택 버튼
+document.getElementById('suggestSelectLocation').addEventListener('click', function() {
+    console.log('위치 선택 버튼 클릭됨');
+    isSelectingLocation = true;
+    console.log('isSelectingLocation:', isSelectingLocation);
+    
+    // 모달만 닫기 (isSelectingLocation 초기화하지 않음)
+    document.getElementById('suggestModal').style.display = 'none';
+    
+    // 메뉴창도 닫기
+    var subMenu = document.getElementById('subMenu');
+    var overlay = document.getElementById('overlay');
+    if (subMenu.classList.contains('show')) {
+        subMenu.classList.remove('show');
+        overlay.style.display = 'none';
+        setTimeout(function() {
+            subMenu.style.display = 'none';
+        }, 200);
+    }
+    
+    // 위치 선택 오버레이 표시
+    document.getElementById('locationSelectOverlay').style.display = 'flex';
+    
+    console.log('모든 창 닫힘, 맵 클릭 대기 중...');
+});
+
+// 맵 클릭으로 위치 선택 (기존 맵 클릭 이벤트에 추가 필요)
+function handleMapClickForSuggest(coords) {
+    console.log('handleMapClickForSuggest 호출됨, coords:', coords);
+    if (isSelectingLocation) {
+        console.log('위치 선택 모드 활성화됨');
+        suggestCoords = coords;
+        isSelectingLocation = false;
+        
+        // 위치 선택 오버레이 숨기기
+        document.getElementById('locationSelectOverlay').style.display = 'none';
+        
+        // 메뉴창 다시 열기
+        var subMenu = document.getElementById('subMenu');
+        var overlay = document.getElementById('overlay');
+        console.log('메뉴창 다시 열기 시작');
+        subMenu.style.display = 'block';
+        overlay.style.display = 'block';
+        setTimeout(function() {
+            subMenu.classList.add('show');
+            console.log('메뉴창 show 클래스 추가됨');
+        }, 10);
+        
+        // 정보 제안 모달 다시 열기 (초기화하지 않고 그대로 복원)
+        setTimeout(function() {
+            var modal = document.getElementById('suggestModal');
+            modal.style.display = 'flex';
+            console.log('모달 다시 열림');
+            
+            // 좌표 값 설정
+            var coordText = '(' + coords[0].toFixed(0) + ', ' + coords[1].toFixed(0) + ')';
+            document.getElementById('suggestCoords').value = coordText;
+            console.log('좌표 설정됨:', coordText);
+        }, 250); // 메뉴 애니메이션 후
+    }
+}
+
+// 제안 폼 제출
+document.getElementById('suggestForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    var title = document.getElementById('suggestTitle').value.trim();
+    var content = document.getElementById('suggestContent').value.trim();
+    
+    if (!title || !content) {
+        alert('모든 필드를 입력해주세요.');
+        return;
+    }
+    
+    // 정보 추가/수정인 경우 위치 필수
+    if ((currentSuggestType === 'add' || currentSuggestType === 'edit') && !suggestCoords) {
+        alert('위치를 선택해주세요.');
+        return;
+    }
+    
+    // 사용자 정보
+    var username = userProfile.nickname || (userIPLast2 ? '익명 (' + userIPLast2 + ')' : '익명');
+    
+    // 서버로 전송할 데이터
+    var suggestData = {
+        type: currentSuggestType,
+        title: title,
+        content: content,
+        username: username,
+        coords: suggestCoords
+    };
+    
+    // 서버로 전송 (API 엔드포인트는 추후 구현)
+    fetch('https://api.zerossin.com/suggestions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(suggestData)
+    })
+    .then(function(response) {
+        if (response.ok || response.status === 200 || response.status === 201) {
+            return response.json().catch(function() {
+                return { success: true };
+            });
+        } else {
+            throw new Error('제안 등록 실패');
+        }
+    })
+    .then(function(data) {
+        alert('제안이 등록되었습니다. 검토 후 반영하겠습니다.');
+        closeSuggestModal();
+    })
+    .catch(function(error) {
+        console.error('Error:', error);
+        alert('제안 등록 중 오류가 발생하였습니다.');
+    });
+});
+
+// 정보 제안 모달 닫기 버튼
+document.getElementById('suggestModalClose').addEventListener('click', closeSuggestModal);
+
+// 모달 외부 클릭 시 닫기
+document.getElementById('suggestModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeSuggestModal();
     }
 });
 
@@ -1026,6 +1226,15 @@ detailCloseButton.addEventListener('click', function (e) {
 
 // 지도 클릭 시 세부 창 닫기
 unmined.openlayersMap.on('click', function(evt) {
+    console.log('맵 클릭 이벤트 발생, isSelectingLocation:', isSelectingLocation);
+    
+    // 위치 선택 모드인 경우
+    if (isSelectingLocation) {
+        console.log('위치 선택 모드로 handleMapClickForSuggest 호출');
+        handleMapClickForSuggest(evt.coordinate);
+        return;
+    }
+    
     // 검색 결과 닫기
     var resultsContainer = document.getElementById('search-results');
     if (resultsContainer.style.display !== 'none') {

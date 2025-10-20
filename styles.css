@@ -211,6 +211,44 @@ header #search-window {
     display: none;
 }
 
+/* 위치 선택 모드 오버레이 */
+.location-select-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(33, 150, 243, 0.15);
+    z-index: 999;
+    cursor: crosshair;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 100px;
+    pointer-events: none;
+}
+
+.location-select-hint {
+    background-color: rgba(33, 150, 243, 0.9);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    animation: hintPulse 2s infinite;
+    pointer-events: none;
+}
+
+@keyframes hintPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
 /* 프로필 설정 모달 */
 .profile-modal {
     position: fixed;
@@ -358,6 +396,185 @@ header #search-window {
 }
 
 .profile-save-button:hover {
+    background-color: #45a049;
+}
+
+/* 정보 제안 모달 */
+.suggest-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.suggest-modal-content {
+    background-color: white;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.suggest-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.suggest-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.suggest-modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    line-height: 1;
+}
+
+.suggest-modal-close:hover {
+    color: #333;
+}
+
+.suggest-modal-body {
+    padding: 20px;
+}
+
+/* 제안 타입 선택 */
+.suggest-type-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.suggest-type-button {
+    padding: 20px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.suggest-type-button:hover {
+    border-color: #4CAF50;
+    background-color: #f8fff8;
+}
+
+.suggest-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.suggest-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.suggest-desc {
+    font-size: 13px;
+    color: #999;
+}
+
+/* 제안 폼 */
+.suggest-back-button {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 0;
+    margin-bottom: 15px;
+}
+
+.suggest-back-button:hover {
+    color: #333;
+}
+
+.suggest-form-group {
+    margin-bottom: 20px;
+}
+
+.suggest-form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.suggest-form-group input,
+.suggest-form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.suggest-form-group input:focus,
+.suggest-form-group textarea:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.suggest-form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.suggest-select-location {
+    margin-top: 8px;
+    padding: 8px 16px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.suggest-select-location:hover {
+    background-color: #1976D2;
+}
+
+.suggest-submit-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.suggest-submit-button:hover {
     background-color: #45a049;
 }
 
