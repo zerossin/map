@@ -1984,15 +1984,6 @@ UnminedCustomMarkers = {
             imageScale: 0.05,
             textColor: heritageColor
         }),
-        createMarker('district', {
-            x: -74,
-            z: -282,
-            text: "청림동",
-            minZoom: 7,
-            maxZoom: 8,
-            imageScale: 0.05,
-            textColor: "white"
-        }),
         createMarker('normal', {
             x: -1300,
             z: 1000,

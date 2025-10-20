@@ -772,6 +772,15 @@ function focusOnMarker(marker) {
         duration: 300
     });
     
+    // 마커의 실제 좌표를 상단에 표시
+    var coordElement = document.querySelector('.custom-mouse-position');
+    if (!coordElement) {
+        coordElement = document.querySelector('.ol-mouse-position');
+    }
+    if (coordElement) {
+        coordElement.textContent = `${marker.x}, ${marker.z}`;
+    }
+    
     // 좌표 표시 강조
     highlightCoordinateDisplay();
 
@@ -1087,7 +1096,7 @@ var categoryNames = {
     'fastfood': '음식점',
     'bakery': '제과점',
     'cafe': '카페',
-    'building': '건물',
+    'building': '회사',
     'culture': '문화시설',
     'shopping': '쇼핑',
     'port': '항구',
