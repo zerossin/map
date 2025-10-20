@@ -61,7 +61,7 @@ header #search-window {
     position: fixed;
     top: 0;
     left: 0;
-    width: 250px;
+    width: 280px;
     height: 100%;
     background-color: white;
     display: none;
@@ -69,6 +69,7 @@ header #search-window {
     transition: transform 0.2s ease-out;
     transform: translateX(-100%);
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
 }
 
 .sub-menu.show {
@@ -76,12 +77,110 @@ header #search-window {
     transform: translateX(0);
 }
 
-#iconBox {
-    width: 100%;
-    height: 100%;
+/* 프로필 섹션 */
+.menu-profile {
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.profile-image {
+    margin-bottom: 15px;
     display: flex;
     justify-content: center;
-    align-items: flex-end;
+}
+
+.profile-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.profile-ip {
+    font-size: 14px;
+    font-weight: normal;
+    color: #999;
+}
+
+/* 구분선 */
+.menu-divider {
+    height: 8px;
+    background-color: #f5f5f5;
+    margin: 0;
+}
+
+/* 메뉴 옵션 */
+.menu-options {
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu-button {
+    padding: 12px 15px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-align: left;
+}
+
+.menu-button:hover {
+    background-color: #f8f8f8;
+}
+
+/* 맵 정보 섹션 */
+.menu-map-info {
+    padding: 20px 15px;
+    text-align: center;
+}
+
+.map-update-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.map-update-date {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 15px;
+}
+
+.menu-update-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.menu-update-button:hover {
+    background-color: #45a049;
+}
+
+.menu-update-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* 소셜 링크 */
+#iconBox {
+    width: 100%;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .icon {
@@ -91,13 +190,14 @@ header #search-window {
 }
 
 .no_dot {
-    margin: 20px;
+    margin: 0;
     padding: 0;
     list-style-type: none;
 }
 
 .no_dot li {
     display: inline-block;
+    margin: 0 15px;
 }
 
 .dark-overlay {
@@ -109,6 +209,156 @@ header #search-window {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1;
     display: none;
+}
+
+/* 프로필 설정 모달 */
+.profile-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-modal-content {
+    background-color: white;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.profile-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.profile-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.profile-modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    line-height: 1;
+}
+
+.profile-modal-close:hover {
+    color: #333;
+}
+
+.profile-modal-body {
+    padding: 20px;
+}
+
+/* 프로필 이미지 섹션 */
+.profile-image-section {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.profile-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #eee;
+}
+
+.profile-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-image-button,
+.profile-image-reset {
+    padding: 8px 16px;
+    margin: 5px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.2s;
+}
+
+.profile-image-button:hover,
+.profile-image-reset:hover {
+    background-color: #f8f8f8;
+}
+
+/* 닉네임 섹션 */
+.profile-nickname-section {
+    margin-bottom: 25px;
+}
+
+.profile-nickname-section label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.profile-nickname-section input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.profile-nickname-section input:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.nickname-help {
+    font-size: 12px;
+    color: #999;
+    margin-top: 5px;
+}
+
+/* 저장 버튼 */
+.profile-save-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.profile-save-button:hover {
+    background-color: #45a049;
 }
 
 #map {
@@ -623,7 +873,8 @@ div.ol-mouse-position {
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 200px;
+        height: auto;
+        max-height: 60vh;
         transform: translateY(100%);
         border-top-left-radius: 15px;
         border-top-right-radius: 15px;
@@ -632,6 +883,66 @@ div.ol-mouse-position {
     
     .sub-menu.show {
         transform: translateY(0);
+    }
+    
+    /* 모바일 프로필 */
+    .menu-profile {
+        padding: 20px 15px;
+    }
+    
+    .profile-image svg {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .profile-name {
+        font-size: 14px;
+    }
+    
+    /* 모바일 메뉴 옵션 - 가로 배치 */
+    .menu-options {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 8px;
+        padding: 15px;
+        justify-content: center;
+    }
+    
+    .menu-button {
+        min-width: 120px;
+        padding: 10px 12px;
+        font-size: 13px;
+        background-color: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        text-align: center;
+        flex-shrink: 0;
+    }
+    
+    /* 모바일 맵 정보 */
+    .menu-map-info {
+        padding: 15px;
+    }
+    
+    .map-update-label {
+        font-size: 13px;
+    }
+    
+    .map-update-date {
+        font-size: 11px;
+    }
+    
+    .menu-update-button {
+        font-size: 13px;
+        padding: 8px;
+    }
+    
+    /* 모바일 아이콘 */
+    .icon {
+        font-size: 2rem;
+    }
+    
+    .no_dot li {
+        margin: 0 10px;
     }
 }
 

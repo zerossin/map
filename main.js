@@ -91,6 +91,213 @@ document.getElementById('overlay').addEventListener('click', function () {
     }
 });
 
+// 사용자 프로필 관리
+var userProfile = {
+    nickname: '',
+    profileImage: ''
+};
+
+// localStorage에서 프로필 불러오기
+function loadUserProfile() {
+    var saved = localStorage.getItem('userProfile');
+    if (saved) {
+        userProfile = JSON.parse(saved);
+        updateProfileDisplay();
+    }
+}
+
+// localStorage에 프로필 저장
+function saveUserProfile() {
+    localStorage.setItem('userProfile', JSON.stringify(userProfile));
+}
+
+// 메뉴판 프로필 표시 업데이트
+function updateProfileDisplay() {
+    var profileNameElement = document.querySelector('.profile-name');
+    var profileImageElement = document.querySelector('.profile-image');
+    
+    // 닉네임 업데이트
+    if (userProfile.nickname) {
+        var ipText = document.getElementById('userIP').textContent;
+        profileNameElement.innerHTML = userProfile.nickname + ' <span class="profile-ip" id="userIP">' + ipText + '</span>';
+    } else {
+        var ipText = document.getElementById('userIP').textContent;
+        profileNameElement.innerHTML = '익명 <span class="profile-ip" id="userIP">' + ipText + '</span>';
+    }
+    
+    // 프로필 이미지 업데이트
+    if (userProfile.profileImage) {
+        profileImageElement.innerHTML = '<img src="' + userProfile.profileImage + '" alt="프로필" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">';
+    } else {
+        // 기본 SVG 이미지
+        profileImageElement.innerHTML = `
+            <svg width="60" height="60" viewBox="0 0 60 60">
+                <circle cx="30" cy="30" r="30" fill="#E0E0E0"/>
+                <circle cx="30" cy="22" r="10" fill="white"/>
+                <path d="M 10 50 Q 10 35 30 35 Q 50 35 50 50" fill="white"/>
+            </svg>
+        `;
+    }
+}
+
+// 메뉴 버튼 이벤트
+document.getElementById('menu-profile').addEventListener('click', function() {
+    openProfileModal();
+});
+
+document.getElementById('menu-notice').addEventListener('click', function() {
+    alert('공지사항 기능은 준비 중입니다.');
+});
+
+document.getElementById('menu-suggest').addEventListener('click', function() {
+    alert('정보 제안 기능은 준비 중입니다.');
+});
+
+document.getElementById('menu-update').addEventListener('click', function() {
+    alert('맵 갱신 기능은 준비 중입니다.');
+});
+
+// 프로필 모달 열기
+function openProfileModal() {
+    var modal = document.getElementById('profileModal');
+    var nicknameInput = document.getElementById('nicknameInput');
+    var profilePreview = document.getElementById('profilePreview');
+    
+    // 현재 프로필 정보 로드
+    nicknameInput.value = userProfile.nickname || '';
+    
+    if (userProfile.profileImage) {
+        profilePreview.innerHTML = '<img src="' + userProfile.profileImage + '" alt="프로필">';
+    } else {
+        profilePreview.innerHTML = `
+            <svg width="80" height="80" viewBox="0 0 60 60">
+                <circle cx="30" cy="30" r="30" fill="#E0E0E0"/>
+                <circle cx="30" cy="22" r="10" fill="white"/>
+                <path d="M 10 50 Q 10 35 30 35 Q 50 35 50 50" fill="white"/>
+            </svg>
+        `;
+    }
+    
+    modal.style.display = 'flex';
+}
+
+// 프로필 모달 닫기
+function closeProfileModal() {
+    document.getElementById('profileModal').style.display = 'none';
+}
+
+// 프로필 모달 이벤트
+document.getElementById('profileModalClose').addEventListener('click', closeProfileModal);
+
+document.getElementById('profileImageButton').addEventListener('click', function() {
+    document.getElementById('profileImageInput').click();
+});
+
+document.getElementById('profileImageInput').addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (file) {
+        // 이미지 크기 제한 (2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            alert('이미지 크기는 2MB 이하여야 합니다.');
+            return;
+        }
+        
+        var reader = new FileReader();
+        reader.onload = function(event) {
+            var img = new Image();
+            img.onload = function() {
+                // 이미지 리사이징 (최대 200x200)
+                var canvas = document.createElement('canvas');
+                var maxSize = 200;
+                var width = img.width;
+                var height = img.height;
+                
+                if (width > height) {
+                    if (width > maxSize) {
+                        height *= maxSize / width;
+                        width = maxSize;
+                    }
+                } else {
+                    if (height > maxSize) {
+                        width *= maxSize / height;
+                        height = maxSize;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                var resizedImage = canvas.toDataURL('image/jpeg', 0.8);
+                document.getElementById('profilePreview').innerHTML = '<img src="' + resizedImage + '" alt="프로필">';
+                userProfile.profileImage = resizedImage;
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+document.getElementById('profileImageReset').addEventListener('click', function() {
+    userProfile.profileImage = '';
+    document.getElementById('profilePreview').innerHTML = `
+        <svg width="80" height="80" viewBox="0 0 60 60">
+            <circle cx="30" cy="30" r="30" fill="#E0E0E0"/>
+            <circle cx="30" cy="22" r="10" fill="white"/>
+            <path d="M 10 50 Q 10 35 30 35 Q 50 35 50 50" fill="white"/>
+        </svg>
+    `;
+});
+
+document.getElementById('profileSaveButton').addEventListener('click', function() {
+    var nickname = document.getElementById('nicknameInput').value.trim();
+    
+    if (nickname && nickname.length > 20) {
+        alert('닉네임은 20자 이하로 입력해주세요.');
+        return;
+    }
+    
+    userProfile.nickname = nickname;
+    saveUserProfile();
+    updateProfileDisplay();
+    closeProfileModal();
+    alert('프로필이 저장되었습니다.');
+});
+
+// 모달 외부 클릭 시 닫기
+document.getElementById('profileModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeProfileModal();
+    }
+});
+
+// 사용자 IP 주소 저장 (전역 변수)
+var userIPLast2 = '';
+
+// 사용자 IP 주소 가져오기 (마지막 2자리만 표시)
+fetch('https://api.ipify.org?format=json')
+    .then(response => response.json())
+    .then(data => {
+        var ip = data.ip;
+        var ipParts = ip.split('.');
+        // 마지막 2자리만 표시
+        var lastTwo = ipParts.slice(-2).join('.');
+        userIPLast2 = lastTwo;
+        document.getElementById('userIP').textContent = '(' + lastTwo + ')';
+        
+        // IP 로드 후 프로필 불러오기
+        loadUserProfile();
+    })
+    .catch(error => {
+        // IP를 가져올 수 없는 경우 빈 문자열
+        userIPLast2 = '';
+        document.getElementById('userIP').textContent = '';
+        
+        // IP 없어도 프로필 불러오기
+        loadUserProfile();
+    });
+
 // 타이틀 클릭 시 새로고침
 document.getElementById('title').addEventListener('click', function () {
     location.reload();
@@ -533,11 +740,20 @@ function handleReviewSubmit(e) {
         return;
     }
 
+    // 사용자 이름 생성: 닉네임 있으면 닉네임, 없으면 익명 (IP)
+    var username;
+    if (userProfile.nickname) {
+        username = userProfile.nickname;
+    } else {
+        username = userIPLast2 ? '익명 (' + userIPLast2 + ')' : '익명';
+    }
+
     // 리뷰 데이터를 서버로 전송
     var reviewData = {
         placeId: currentMarker.text,
         rating: rating,
-        comment: comment
+        comment: comment,
+        username: username
     };
 
     fetch('https://api.zerossin.com/reviews', {
