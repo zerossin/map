@@ -999,6 +999,124 @@ function handleReviewSubmit(e) {
         });
 }
 
+// 행정구역별 소속 정보 매핑
+var districtGu = {
+    // 성내구
+    '시작동': '성내구',
+    '동림동': '성내구',
+    '남해동': '성내구',
+    '중명동': '성내구',
+    '북연동': '성내구',
+    
+    // 성동구
+    '강설부': '성동구',
+    '천풍부': '성동구',
+    '성호부': '성동구',
+    '미수부': '성동구',
+    '동명부': '성동구',
+    '연월부': '성동구',
+    '금청부': '성동구',
+    '미지정': '성동구',
+    '호반정': '성동구',
+    
+    // 성남구
+    '강남동': '성남구',
+    '봉탄동': '성남구',
+    '구포동': '성남구',
+    '연해동': '성남구',
+    '남만면': '성남구',
+    
+    // 성서구
+    '광평동': '성서구',
+    '화양동': '성서구',
+    '광호면': '성서구',
+    '창림면': '성서구',
+    '모원면': '성서구',
+    
+    // 성북구
+    '백암동': '성북구'
+};
+
+// 가장 가까운 행정구역 찾기 (custom.markers.js의 district 마커 활용)
+function findNearestDistrict(x, z) {
+    if (!UnminedCustomMarkers || !UnminedCustomMarkers.markers) {
+        return null;
+    }
+    
+    // districtGu에 정의된 행정구역 이름으로 필터링
+    var districtNames = Object.keys(districtGu);
+    var districtMarkers = UnminedCustomMarkers.markers.filter(function(m) {
+        return districtNames.indexOf(m.text) !== -1;
+    });
+    
+    var minDistance = Infinity;
+    var nearest = null;
+    
+    for (var i = 0; i < districtMarkers.length; i++) {
+        var marker = districtMarkers[i];
+        var dx = marker.x - x;
+        var dz = marker.z - z;
+        var distance = Math.sqrt(dx * dx + dz * dz);
+        
+        if (distance < minDistance) {
+            minDistance = distance;
+            nearest = {
+                name: marker.text,
+                gu: districtGu[marker.text],
+                x: marker.x,
+                z: marker.z
+            };
+        }
+    }
+    
+    return nearest;
+}
+
+// 프리셋별 카테고리명 매핑
+var categoryNames = {
+    'line0': '역',
+    'line1': '역',
+    'line2': '역',
+    'line3': '역',
+    'line4': '역',
+    'subway': '역',
+    'district': '행정구역',
+    'nature': '자연',
+    'park': '공원',
+    'restaurant': '음식점',
+    'fastfood': '음식점',
+    'bakery': '제과점',
+    'cafe': '카페',
+    'building': '건물',
+    'culture': '문화시설',
+    'shopping': '쇼핑',
+    'port': '항구',
+    'government': '관공서',
+    'hospital': '병원',
+    'heritage': '문화재',
+    'hotel': '숙박',
+    'house': '주거',
+    'sport': '체육시설',
+    'university': '교육기관',
+    'annex': '부속건물',
+    'normal': '일반'
+};
+
+// 마커의 프리셋으로 카테고리 추출
+function getMarkerCategory(marker) {
+    // 마커의 이미지 경로에서 프리셋 추출
+    if (!marker.image) return null;
+    
+    var imagePath = marker.image;
+    var match = imagePath.match(/pinImages\/(.+?)\.pin\.svg/);
+    if (match && match[1]) {
+        var preset = match[1];
+        return categoryNames[preset] || null;
+    }
+    
+    return null;
+}
+
 // 세부 창 요소 가져오기
 var detailWindow = document.getElementById('detail-window');
 var detailCloseButton = document.getElementById('detail-close-button');
@@ -1347,8 +1465,13 @@ function openDetailWindow(marker, keepExpanded) {
         detailWindow.classList.add('expanded');
     }
 
-    // 기본 정보 채우기
-    titleElement.textContent = marker.text;
+    // 기본 정보 채우기 - 카테고리 태그 추가
+    var categoryTag = getMarkerCategory(marker);
+    if (categoryTag) {
+        titleElement.innerHTML = `${marker.text} <span class="place-category">${categoryTag}</span>`;
+    } else {
+        titleElement.textContent = marker.text;
+    }
 
     // 이미지 파일 경로 설정
     var imageExtensions = ['png', 'jpg', 'jpeg'];
@@ -1367,7 +1490,18 @@ function openDetailWindow(marker, keepExpanded) {
     loadImage();
 
     photoElement.alt = marker.text;
-    addressElement.textContent = marker.address ? `${marker.address} (${marker.x}, ${marker.z})` : `주소 정보 없음 (${marker.x}, ${marker.z})`;
+    
+    // 주소 정보 표시 - 없으면 가장 가까운 행정구역 표시
+    if (marker.address) {
+        addressElement.textContent = `${marker.address} (${marker.x}, ${marker.z})`;
+    } else {
+        var nearestDistrict = findNearestDistrict(marker.x, marker.z);
+        if (nearestDistrict) {
+            addressElement.textContent = `수민특별시 ${nearestDistrict.gu} ${nearestDistrict.name} (${marker.x}, ${marker.z})`;
+        } else {
+            addressElement.textContent = `주소 정보 없음 (${marker.x}, ${marker.z})`;
+        }
+    }
 
     // 가장 가까운 지하철 역 찾기
     var nearest = findNearestSubwayStation(marker);

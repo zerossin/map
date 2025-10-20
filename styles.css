@@ -990,6 +990,18 @@ div.ol-mouse-position {
 .detail-text h2 {
     margin: 0;
     font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.place-category {
+    font-size: 13px;
+    color: #999;
+    font-weight: normal;
+    padding: 2px 8px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
 }
 
 .detail-rating {
