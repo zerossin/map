@@ -13,17 +13,25 @@ unmined.map('map', UnminedMapProperties, UnminedRegions);
 
 // 중앙 좌표 표시 업데이트 함수
 function updateCenterCoordinates() {
+    var coordElement = document.querySelector('.custom-mouse-position');
+    if (!coordElement) {
+        coordElement = document.querySelector('.ol-mouse-position');
+    }
+    
+    // 마커가 선택된 상태면 마커 좌표 유지
+    if (currentMarker && detailWindow && detailWindow.style.display === 'block') {
+        if (coordElement) {
+            coordElement.textContent = `${currentMarker.x}, ${currentMarker.z}`;
+        }
+        return;
+    }
+    
     var view = unmined.openlayersMap.getView();
     var center = view.getCenter();
     
     if (center) {
         var x = Math.round(center[0]);
         var z = Math.round(-center[1]);
-        
-        var coordElement = document.querySelector('.custom-mouse-position');
-        if (!coordElement) {
-            coordElement = document.querySelector('.ol-mouse-position');
-        }
         
         if (coordElement) {
             coordElement.textContent = `${x}, ${z}`;
@@ -1359,6 +1367,10 @@ function closeDetailWindow() {
         detailWindow.classList.remove('expanded', 'small');
         detailWindow.style.display = 'none';
         detailWindow.style.height = ''; // 완전히 사라진 후 정리
+        
+        // 정보창이 닫히면 currentMarker 초기화 및 좌표 업데이트
+        currentMarker = null;
+        updateCenterCoordinates();
     }, 250);
 }
 
