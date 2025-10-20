@@ -58,15 +58,22 @@ header #search-window {
 }
 
 .sub-menu {
-    position: absolute;
-    top: 50%;
+    position: fixed;
+    top: 0;
     left: 0;
-    transform: translate(0, -50%);
-    width: 200px;
+    width: 250px;
     height: 100%;
     background-color: white;
     display: none;
-    z-index: 2;
+    z-index: 1000;
+    transition: transform 0.2s ease-out;
+    transform: translateX(-100%);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sub-menu.show {
+    display: block;
+    transform: translateX(0);
 }
 
 #iconBox {
@@ -608,6 +615,23 @@ div.ol-mouse-position {
     #detail-window.small,
     #detail-window.expanded {
         padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    /* 모바일에서 메뉴는 아래에서 나옴 */
+    .sub-menu {
+        top: auto;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 200px;
+        transform: translateY(100%);
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .sub-menu.show {
+        transform: translateY(0);
     }
 }
 

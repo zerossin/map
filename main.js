@@ -48,12 +48,46 @@ document.getElementById('menuBtn').addEventListener('click', function () {
     var overlay = document.getElementById('overlay');
 
     // 보조 메뉴창의 표시 여부를 토글합니다.
-    if (subMenu.style.display === 'none' || subMenu.style.display === '') {
-        subMenu.style.display = 'block';
-        overlay.style.display = 'block'; // 배경 오버레이를 보이도록 합니다.
+    if (subMenu.classList.contains('show')) {
+        // 닫기: 애니메이션 후 display none
+        subMenu.classList.remove('show');
+        overlay.style.display = 'none';
+        setTimeout(function() {
+            subMenu.style.display = 'none';
+        }, 200); // transition 시간과 맞춤
     } else {
-        subMenu.style.display = 'none';
-        overlay.style.display = 'none'; // 배경 오버레이를 숨깁니다.
+        // 열기 전에 다른 창들 닫기
+        // 정보창 닫기
+        if (detailWindow.style.display !== 'none') {
+            closeDetailWindow();
+        }
+        
+        // 검색 결과 닫기
+        var searchResults = document.getElementById('search-results');
+        if (searchResults) {
+            searchResults.style.display = 'none';
+        }
+        
+        // 열기: display block 후 애니메이션
+        subMenu.style.display = 'block';
+        overlay.style.display = 'block';
+        setTimeout(function() {
+            subMenu.classList.add('show');
+        }, 10); // 다음 프레임에서 애니메이션 시작
+    }
+});
+
+// 오버레이 클릭 시 메뉴 닫기
+document.getElementById('overlay').addEventListener('click', function () {
+    var subMenu = document.getElementById('subMenu');
+    var overlay = document.getElementById('overlay');
+    
+    if (subMenu.classList.contains('show')) {
+        subMenu.classList.remove('show');
+        overlay.style.display = 'none';
+        setTimeout(function() {
+            subMenu.style.display = 'none';
+        }, 200);
     }
 });
 
